@@ -1,0 +1,2 @@
+cd task 
+npm install 
