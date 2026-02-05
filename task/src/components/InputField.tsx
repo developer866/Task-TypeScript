@@ -1,8 +1,9 @@
 interface Props {
   todo: string;
   setTodo: React.Dispatch<React.SetStateAction<string>>;
+  handleAdd:(e: React.FormEvent)=>void
 }
-export const InputField = ({ todo, setTodo }: Props) => {
+export const InputField = ({ todo, setTodo,handleAdd }: Props) => {
   return (
     <main>
       <input
@@ -12,7 +13,7 @@ export const InputField = ({ todo, setTodo }: Props) => {
         placeholder="Enter a task"
         className="input__box"
       />
-      <button className="input__submit" type="submit">
+      <button className="input__submit" type="submit" onClick={handleAdd}>
         Go
       </button>
     </main>
