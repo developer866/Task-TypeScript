@@ -5,6 +5,7 @@ import type { Todo } from "./components/model";
 
 const App = () => {
   const [todo, setTodo] = useState<string>("");
+  const [error,setError] = useState<string>("")
   const [todos, setTodos] = useState<Todo[]>(() => {
     const storedTodos = localStorage.getItem("todos");
     return storedTodos ? JSON.parse(storedTodos) : [];
@@ -42,16 +43,20 @@ const App = () => {
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!todo) return;
+    if (!todo){
+      setError("Input Field can be Empty")
+      return
+    };
+    setError("")
 
     if (todo) {
       setTodos([
-        ...todos,
         {
           id: Date.now(),
           todo: todo,
           isDone: false,
         },
+        ...todos
       ]);
       setTodo("");
       console.log(todos);
@@ -64,7 +69,7 @@ const App = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-6">Task Manager</h1>
-          <InputField todo={todo} setTodo={setTodo} handleAdd={handleAdd} />
+          <InputField todo={todo} error={error} setTodo={setTodo} handleAdd={handleAdd} />
         </div>
 
         {/* Stats Section */}
