@@ -2,28 +2,19 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./Config/db");
-const User = require("./models/user");
-
-dotenv.config();
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
-// connect database
+app.use(cors());
+
+dotenv.config();
+app.use(express.json());
 connectDB();
 
-app.use(cors());
-app.use(express.json());
-
 app.get("/", (req, res) => {
-  reson.status(200).send("Welcome our store");
+  res.status(200).send("Welcome our store");
 });
-app.get("/test-user", async (req, res) => {
-  const user = await User.create({
-    name: "Test User",
-    email: "test@project.com",
-    password: "123456",
-  });
-  res.json(user);
-});
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 
