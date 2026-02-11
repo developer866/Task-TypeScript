@@ -5,18 +5,44 @@ const RegisterUser = () => {
     name: "",
     email: "",
     password: "",
+    comfirmPassword: "",
     role: "",
   });
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string[]>([]);
 
-  const handleChange = (e) => {
+  const validatePassword = () => {
+    const newErrors: string[] = [];
+    if (formData.password.length < 10)
+      newErrors.push("Password must be at least 10 characters long");
+
+    if (formData.password.length > 24)
+      newErrors.push("Password must be at most 24 characters long");
+
+    if (formData.password.includes(" "))
+      newErrors.push("Password cannot contain spaces");
+
+    if (!/[0-9]/.test(formData.password))
+      newErrors.push("Password must contain at least one number");
+
+    if (!/[A-Z]/.test(formData.password))
+      newErrors.push("Password must contain at least one uppercase letter");
+
+    if (!/[a-z]/.test(formData.password))
+      newErrors.push("Password must contain at least one lowercase letter");
+    setError(newErrors);
+  };
+
+  const handleChange = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+    validatePassword();
+    if (formData !== formData.comfirmPassword) {
+      console.log("error invalid password");
+    }
   };
 
   return (
