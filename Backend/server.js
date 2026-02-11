@@ -5,7 +5,14 @@ const connectDB = require("./Config/db");
 const userRoutes = require("./routes/userRoutes");
 
 const app = express();
+
 app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // or 3000
+    credentials: true,
+  })
+);
 
 dotenv.config();
 app.use(express.json());
