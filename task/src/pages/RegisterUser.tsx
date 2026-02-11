@@ -1,9 +1,7 @@
-import React from 'react'
-
-function RegisterUser() {
-    return (
+ const RegisterUser= ()=> {
+        return (
         <main>
-            <form>
+            <form className="flex">
                 <label htmlFor="name">Name</label>
                 <input type="text" />
                 <label htmlFor="Email">Email</label>
