@@ -46,23 +46,26 @@ const RegisterUser = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const validationErrors = validatePassword();
+  const validationErrors = validatePassword();
 
-    if (validationErrors.length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+  if (validationErrors.length > 0) {
+    setErrors(validationErrors);
+    return;
+  }
 
+  try {
     setErrors([]);
-    try {
-      const data = await registerUser(formData);
-      console.log("User registered:", data);
-    } catch (error: any) {
-      setErrors([error.message || "Something went wrong"]);
-    }
-  };
+    await registerUser(formData);
+    console.log("User registered successfully");
+  } catch (error) {
+    setErrors(["Registration failed"]);
+    console.log(error)
+
+  }
+};
+
 
   return (
     <form
