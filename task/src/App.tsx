@@ -3,11 +3,13 @@ import RegisterUser from "./pages/RegisterUser";
 import Taskpage from "./pages/Taskpage";
 import "./App.css";
 import { ToastContainer } from "react-toastify";
+import Login from "./pages/Login";
 
 function App() {
   return (
     <main>
       <Routes>
+        <Route path="/login" element ={<Login />} />
         <Route path="/register" element={<RegisterUser />} />
         <Route path="/taskpage" element={<Taskpage />} />
       </Routes>
