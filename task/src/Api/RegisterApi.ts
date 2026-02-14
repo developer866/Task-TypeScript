@@ -9,9 +9,12 @@ export const registerUser = async (userData: any) => {
     body: JSON.stringify(userData),
   });
 
+  const data = await response.json(); // parse JSON
+
   if (!response.ok) {
-    throw new Error("Request failed");
+    throw new Error(data.message || "Request failed"); // use backend message
   }
 
-  return response.json();
+
+  return data;
 };

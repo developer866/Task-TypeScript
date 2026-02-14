@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { registerUser } from "../Api/RegisterApi";
-
+import {toast} from "react-toastify"
 const RegisterUser = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -58,11 +58,12 @@ const RegisterUser = () => {
   try {
     setErrors([]);
     await registerUser(formData);
+    toast("user create sucessfully")
     console.log("User registered successfully");
   } catch (error) {
-    setErrors(["Registration failed"]);
+    setErrors([error.message || "Something went wrong"]);
+    toast(error.message)
     console.log(error)
-
   }
 };
 
