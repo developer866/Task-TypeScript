@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { LoginApi } from "../Api/LoginApi";
+import { toast } from "react-toastify";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -10,8 +12,15 @@ function Login() {
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await LoginApi(formData);
+      console.log("sent")
+    } catch (error) {
+      toast(error.message);
+      console.log(error);
+    }
     console.log(formData);
   };
   return (
