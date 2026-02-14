@@ -1,19 +1,25 @@
 import { useState } from "react";
 
 function Login() {
-  const [formdData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     name: "",
-    email: "",
     password: "",
   });
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    setFormData({ ...FormData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formData);
   };
   return (
     <main>
-      <form className="w-1/2">
+      <form
+        className="w-full max-w-md mx-auto p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6"
+        onSubmit={handleSubmit}
+      >
         <div>
           <label htmlFor="email">email or username</label>
           <input
@@ -30,14 +36,22 @@ function Login() {
         <div>
           <label htmlFor="email">email or username</label>
           <input
-            type="text"
+            type="password"
             placeholder="Password"
+            name="password"
             className="w-full flex-1 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-700 bg-gray-50 border
         border-gray-300 rounded-lg focus:outline-none focus:ring-2
         focus:ring-blue-500 focus:border-transparent placeholder-gray-400
         transition-all duration-200"
+            onChange={handleChange}
           />
         </div>
+        <button
+          type="submit"
+          className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white text-sm sm:text-base font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg active:scale-95"
+        >
+          Login
+        </button>
       </form>
     </main>
   );
