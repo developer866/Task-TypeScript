@@ -21,9 +21,9 @@ app.use(express.json());
 // Connect DB
 connectDB();
 
-app.get("/", (req, res) => {
-  res.status(200).send("Welcome our store");
-});
+// app.get("/", (req, res) => {
+//   res.status(200).send("Welcome our store");
+// });
 
 app.use("/api/users", userRoutes);
 

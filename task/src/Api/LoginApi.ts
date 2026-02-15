@@ -10,7 +10,6 @@ export const LoginApi = async (userData: { email: string; password: string }) =>
     body: JSON.stringify(userData),
   });
   const data = await response.json(); // parse JSON
-j
 
   if (!response.ok) {
     throw new Error(data.message || "Request failed"); // use backend message
