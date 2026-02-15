@@ -30,16 +30,26 @@ const registerUser = async (req, res) => {
 };
 
 // Login
-const LoginUser = async(req,res)=>{
-    try{
-        const{name, password} = req.body
-         
-        
-        res.status(200).json({ message: "Login successful" });
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-}
+const LoginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    // Check if Filed is empty
+   if(!email || !password){
+    return res.status(400).json({message:"Fields cannot be empty"})
+   }
+   const user = await User.findOne({email});
+   if(!user){
+    return res.status(401).json({message:"user deoosnt exist"})
+   }
+   if(user.password !== password){
+    return res.status(401).json({message:"Incorrect credentials"})
+   }
+ 
+    res.status(200).json({ message: "Login successful" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 // Get all user
 const getUsers = async (req, res) => {
   try {
@@ -50,4 +60,4 @@ const getUsers = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, getUsers,LoginUser};
+module.exports = { registerUser, getUsers, LoginUser };

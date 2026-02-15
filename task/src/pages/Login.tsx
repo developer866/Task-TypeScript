@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { LoginApi } from "../Api/LoginApi";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: "",
+    email: "",
     password: "",
   });
   const handleChange = (
@@ -12,16 +14,20 @@ function Login() {
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const handleSubmit = async (e) => {
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("Submitting...");
     try {
+      if (!formData.email || !formData.password) {
+        toast.error("Fields cannot be empty");
+        return;
+      }
       await LoginApi(formData);
-      console.log("sent")
+      navigate("/taskpage");
     } catch (error) {
       toast(error.message);
-      console.log(error);
     }
-    console.log(formData);
   };
   return (
     <main>
@@ -30,11 +36,11 @@ function Login() {
         onSubmit={handleSubmit}
       >
         <div>
-          <label htmlFor="email">email or username</label>
+          <label htmlFor="email">email</label>
           <input
             type="text"
-            placeholder="Username or Email"
-            name="name"
+            placeholder="Email"
+            name="email"
             className="w-full flex-1 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-700 bg-gray-50 border
         border-gray-300 rounded-lg focus:outline-none focus:ring-2
         focus:ring-blue-500 focus:border-transparent placeholder-gray-400
@@ -43,7 +49,7 @@ function Login() {
           />
         </div>
         <div>
-          <label htmlFor="email">email or username</label>
+          <label htmlFor="password">Password</label>
           <input
             type="password"
             placeholder="Password"
