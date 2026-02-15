@@ -3,7 +3,7 @@ import { registerUser } from "../Api/RegisterApi";
 import {toast} from "react-toastify"
 import { useNavigate } from "react-router-dom";
 const RegisterUser = () => {
-  const naviget = useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -61,6 +61,7 @@ const RegisterUser = () => {
     setErrors([]);
     await registerUser(formData);
     toast.success("user create sucessfully")
+    navigate("/taskpage")
 
   } catch (error) {
     setErrors([error.message || "Something went wrong"]);

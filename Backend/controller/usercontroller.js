@@ -11,7 +11,7 @@ const registerUser = async (req, res) => {
     if (userExist) {
       return res.status(400).json({ message: "user already exists" });
     }
-    
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
@@ -20,8 +20,19 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
       role,
     });
+    //  Generate token
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.TOKEN_SECRET,
+      { expiresIn: "3d" },
+    );
     res.status(201).json({
       message: "User registered successfully",
+      token,
       user: {
         id: user._id,
         name: user.name,
@@ -43,14 +54,37 @@ const LoginUser = async (req, res) => {
       return res.status(400).json({ message: "Fields cannot be empty" });
     }
     const user = await User.findOne({ email });
+
     if (!user) {
       return res.status(401).json({ message: "user deoosnt exist" });
     }
-    if (user.password !== password) {
+    // ✅ Compare password with hashed password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
       return res.status(401).json({ message: "Incorrect credentials" });
     }
+    //  Generate token
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.TOKEN_SECRET,
+      { expiresIn: "3d" },
+    );
 
-    res.status(200).json({ message: "Login successful" });
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
