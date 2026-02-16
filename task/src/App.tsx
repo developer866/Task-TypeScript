@@ -5,15 +5,24 @@ import "./App.css";
 import { ToastContainer } from "react-toastify";
 import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <main>
       <Navbar />
       <Routes>
-        <Route path="/login" element ={<Login />} />
+        <Route
+          path="/taskpage"
+          element={
+            <ProtectedRoute>
+              <Taskpage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterUser />} />
-        <Route path="/taskpage" element={<Taskpage />} />
       </Routes>
       <ToastContainer />
     </main>

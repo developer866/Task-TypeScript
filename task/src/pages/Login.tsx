@@ -2,8 +2,11 @@ import { useState } from "react";
 import { LoginApi } from "../Api/LoginApi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../features/auth/authSlice";
 
 function Login() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -22,9 +25,15 @@ function Login() {
         toast.error("Fields cannot be empty");
         return;
       }
-      await LoginApi(formData);
+      const data = await LoginApi(formData);
+      dispatch(
+        loginSuccess({
+          user: data.user,
+          token: data.token,
+        }),
+      );
       navigate("/taskpage");
-    } catch (error) {
+    } catch (error: Error) {
       toast(error.message);
     }
   };
