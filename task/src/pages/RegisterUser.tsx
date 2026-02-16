@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { registerUser } from "../Api/RegisterApi";
 import { toast } from "react-toastify";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { loginSuccess } from "../features/auth/authSlice";
 import { useDispatch } from "react-redux";
 
@@ -60,10 +60,10 @@ const RegisterUser = () => {
       setErrors(validationErrors);
       return;
     }
-
+    
     try {
       setErrors([]);
-      const data = await registerUser(formData);
+      const data = await registerUser({ userData: formData });
       toast.success("user create sucessfully");
       dispatch(
         loginSuccess({
@@ -73,10 +73,11 @@ const RegisterUser = () => {
       );
 
       navigate("/taskpage");
-    } catch (error) {
-      setErrors([error.message || "Something went wrong"]);
-      toast(error.message);
-      console.log(error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setErrors([error.message || "Something went wrong"]);
+        toast(error.message);
+      }
     }
   };
 

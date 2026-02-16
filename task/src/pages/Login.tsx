@@ -33,8 +33,10 @@ function Login() {
         }),
       );
       navigate("/taskpage");
-    } catch (error: Error) {
-      toast(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast(error.message);
+      }
     }
   };
   return (
