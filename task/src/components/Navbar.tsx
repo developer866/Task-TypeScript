@@ -16,11 +16,11 @@ function Navbar() {
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50 border-b border-gray-200">
-      <main className="flex justify-between items-center w-[90%] max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+      <main className="flex justify-between items-center  max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
         {/* Logo Section */}
         <section className="flex-shrink-0">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 hover:text-blue-700 transition-colors cursor-pointer">
-            Logo
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-600 hover:text-gray-700 transition-colors cursor-pointer">
+            Clothing Store
           </h1>
         </section>
 
