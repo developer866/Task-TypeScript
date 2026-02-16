@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { registerUser } from "../Api/RegisterApi";
-import {toast} from "react-toastify"
-import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import {  useNavigate } from "react-router-dom";
+import { loginSuccess } from "../features/auth/authSlice";
+import { useDispatch } from "react-redux";
+
 const RegisterUser = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -48,28 +52,33 @@ const RegisterUser = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const validationErrors = validatePassword();
+    const validationErrors = validatePassword();
 
-  if (validationErrors.length > 0) {
-    setErrors(validationErrors);
-    return;
-  }
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
-  try {
-    setErrors([]);
-    await registerUser(formData);
-    toast.success("user create sucessfully")
-    navigate("/taskpage")
+    try {
+      setErrors([]);
+      const data = await registerUser(formData);
+      toast.success("user create sucessfully");
+      dispatch(
+        loginSuccess({
+          user: data.user,
+          token: data.token,
+        }),
+      );
 
-  } catch (error) {
-    setErrors([error.message || "Something went wrong"]);
-    toast(error.message)
-    console.log(error)
-  }
-};
-
+      navigate("/taskpage");
+    } catch (error) {
+      setErrors([error.message || "Something went wrong"]);
+      toast(error.message);
+      console.log(error);
+    }
+  };
 
   return (
     <form

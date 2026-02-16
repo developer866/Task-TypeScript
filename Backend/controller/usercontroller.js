@@ -20,7 +20,7 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
       role,
     });
-    //  Generate token
+    // Genrate Token
     const token = jwt.sign(
       {
         id: user._id,
@@ -28,8 +28,10 @@ const registerUser = async (req, res) => {
         role: user.role,
       },
       process.env.TOKEN_SECRET,
-      { expiresIn: "3d" },
+      { expiresIn: "1h" },
     );
+
+    // respond with token
     res.status(201).json({
       message: "User registered successfully",
       token,
