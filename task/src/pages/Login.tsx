@@ -17,7 +17,6 @@ function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Submitting...");
     try {
       if (!formData.email || !formData.password) {
         toast.error("Fields cannot be empty");
