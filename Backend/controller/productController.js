@@ -53,8 +53,37 @@ const DeleteProduct = async (req, res) => {
   }
 };
 
+//  UPDATE - Edit a product
+const EditProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, price, category, stock, available } = req.body;
+
+    // Check if product exists
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Update product
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { name, description, price, category, stock, available },
+      { new: true, runValidators: true }, // return updated doc
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
+      product: updatedProduct,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 module.exports = {
   AddProduct,
   GetAllProducts,
   DeleteProduct,
+  EditProduct,
 };

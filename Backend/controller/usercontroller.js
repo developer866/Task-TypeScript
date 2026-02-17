@@ -91,6 +91,7 @@ const LoginUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 // Get all user
 const getUsers = async (req, res) => {
   try {

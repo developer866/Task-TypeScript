@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-// ✅ Form interface (strings for input binding)
 interface ProductFormType {
   name: string;
   price: string;
@@ -11,14 +10,13 @@ interface ProductFormType {
   available: boolean;
 }
 
-// ✅ Separate interface for fetched products (matches MongoDB response)
 interface ProductType {
   _id: string;
   name: string;
-  price: number;       // ✅ Number (matches schema)
+  price: number;
   description: string;
   category: string;
-  stock: number;       // ✅ Number (matches schema)
+  stock: number;
   available: boolean;
 }
 
@@ -35,8 +33,8 @@ function Product() {
   const [product, setProduct] = useState<ProductFormType>(INITIAL_FORM);
   const [allProducts, setAllProducts] = useState<ProductType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null); // ✅ ADDED
 
-  // ✅ Reusable fetch function
   const fetchProducts = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/product");
@@ -44,9 +42,7 @@ function Product() {
       const data = await response.json();
       setAllProducts(data.products);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
+      if (error instanceof Error) toast.error(error.message);
     }
   };
 
@@ -67,6 +63,28 @@ function Product() {
     });
   };
 
+  // ✅ CHANGED: now accepts full product object instead of just id
+  const handleEdit = (prod: ProductType) => {
+    setEditingId(prod._id);
+    setProduct({
+      name: prod.name,
+      price: String(prod.price),       // number → string for input
+      description: prod.description,
+      category: prod.category,
+      stock: String(prod.stock),       // number → string for input
+      available: prod.available,
+    });
+    // Scroll to form
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  };
+
+  // ✅ ADDED: cancel edit and reset form
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setProduct(INITIAL_FORM);
+  };
+
+  // ✅ CHANGED: sends PUT if editing, POST if adding
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -83,64 +101,70 @@ function Product() {
 
     setIsLoading(true);
 
+    const productData = {
+      ...product,
+      price: Number(product.price),
+      stock: Number(product.stock),
+    };
+
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/product/addproduct",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...product,
-            price: Number(product.price),
-            stock: Number(product.stock),
-          }),
-        },
-      );
+      if (editingId) {
+        // ✅ EDIT MODE → PUT request
+        const response = await fetch(
+          `http://localhost:5000/api/product/${editingId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(productData),
+          },
+        );
+        if (!response.ok) throw new Error("Failed to update product");
+        toast.success("Product updated successfully!");
+        setEditingId(null);
 
-      if (!response.ok) throw new Error("Failed to add product");
+      } else {
+        // ✅ ADD MODE → POST request
+        const response = await fetch(
+          "http://localhost:5000/api/product/addproduct",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(productData),
+          },
+        );
+        if (!response.ok) throw new Error("Failed to add product");
+        toast.success("Product added successfully!");
+      }
 
-      toast.success("Product added successfully!");
-      setProduct(INITIAL_FORM);         // ✅ Reset form
-      await fetchProducts();            // ✅ Reuse fetch function
+      setProduct(INITIAL_FORM);
+      await fetchProducts();
 
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
+      if (error instanceof Error) toast.error(error.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ✅ Delete handler
   const handleDelete = async (id: string) => {
     try {
       const response = await fetch(
         `http://localhost:5000/api/product/${id}`,
         { method: "DELETE" }
       );
-
       if (!response.ok) throw new Error("Failed to delete product");
-
       toast.success("Product deleted!");
-      await fetchProducts();            // ✅ Refresh product list after deletion
-
+      await fetchProducts();
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
+      if (error instanceof Error) toast.error(error.message);
     }
   };
-  // Edit Handler (placeholder - implement as needed)
-  const handleEdit = (id: string) => {
-    toast.info(`Edit functionality for product ID: ${id} is not implemented yet.`);
-  }
 
   return (
     <main className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-6xl mx-auto space-y-8">
 
-        {/* ✅ Products Table */}
+        {/* Products Table */}
         {allProducts.length > 0 && (
           <div className="w-full">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -152,10 +176,7 @@ function Product() {
                   <tr>
                     {["Name", "Price", "Description", "Category", "Stock", "Available", "Actions"].map(
                       (header) => (
-                        <th
-                          key={header}
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
+                        <th key={header} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           {header}
                         </th>
                       )
@@ -164,8 +185,15 @@ function Product() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {allProducts.map((prod) => (
-                    // ✅ Using _id as key instead of index
-                    <tr key={prod._id} className="hover:bg-gray-50 transition-colors">
+                    <tr
+                      key={prod._id}
+                      // ✅ Highlight the row being edited
+                      className={`transition-colors ${
+                        editingId === prod._id
+                          ? "bg-blue-50 border-l-4 border-blue-500"
+                          : "hover:bg-gray-50"
+                      }`}
+                    >
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {prod.name}
                       </td>
@@ -193,11 +221,12 @@ function Product() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm gap-4 flex">
+                        {/* ✅ CHANGED: passes full prod object */}
                         <button
-                          onClick={() => handleEdit(prod._id)}
-                          className="text-red-600 hover:text-red-800 font-medium transition-colors"
+                          onClick={() => handleEdit(prod)}
+                          className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
                         >
-                         Edit
+                          {editingId === prod._id ? "Editing..." : "Edit"}
                         </button>
                         <button
                           onClick={() => handleDelete(prod._id)}
@@ -214,24 +243,23 @@ function Product() {
           </div>
         )}
 
-        {/* Add Product Form */}
+        {/* Add / Edit Form */}
         <div className="w-full max-w-lg mx-auto bg-white rounded-2xl shadow-lg p-6 sm:p-8">
           <div className="mb-6 sm:mb-8">
+            {/* ✅ Title changes based on mode */}
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
-              Add Product
+              {editingId ? "Edit Product" : "Add Product"}
             </h1>
             <p className="text-sm text-gray-500 mt-1">
-              Fill in the details to add a new product
+              {editingId
+                ? "Update the product details below"
+                : "Fill in the details to add a new product"}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-
-            {/* Product Name */}
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-gray-700">
-                Product Name
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Product Name</label>
               <input
                 type="text"
                 name="name"
@@ -242,15 +270,10 @@ function Product() {
               />
             </div>
 
-            {/* Product Price */}
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-gray-700">
-                Product Price
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Product Price</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">
-                  $
-                </span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">$</span>
                 <input
                   type="number"
                   name="price"
@@ -263,11 +286,8 @@ function Product() {
               </div>
             </div>
 
-            {/* Product Description */}
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-gray-700">
-                Product Description
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Product Description</label>
               <input
                 type="text"
                 name="description"
@@ -278,11 +298,8 @@ function Product() {
               />
             </div>
 
-            {/* Category */}
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-gray-700">
-                Category
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Category</label>
               <select
                 name="category"
                 value={product.category}
@@ -298,11 +315,8 @@ function Product() {
               </select>
             </div>
 
-            {/* Stock */}
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-gray-700">
-                Stock Quantity
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Stock Quantity</label>
               <input
                 type="number"
                 name="stock"
@@ -314,13 +328,10 @@ function Product() {
               />
             </div>
 
-            {/* Available Toggle */}
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
               <div>
                 <p className="text-sm font-medium text-gray-700">Available</p>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  Is this product available for purchase?
-                </p>
+                <p className="text-xs text-gray-500 mt-0.5">Is this product available for purchase?</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -336,15 +347,28 @@ function Product() {
 
             <div className="border-t border-gray-100 pt-2" />
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full px-6 py-3 bg-blue-600 text-white text-sm sm:text-base font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? "Adding..." : "Add Product"}
-            </button>
-
+            {/* ✅ Buttons change based on mode */}
+            <div className="flex gap-3">
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="w-full px-6 py-3 bg-gray-200 text-gray-700 text-sm sm:text-base font-semibold rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 active:scale-95 transition-all duration-200"
+                >
+                  Cancel
+                </button>
+              )}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full px-6 py-3 bg-blue-600 text-white text-sm sm:text-base font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading
+                  ? editingId ? "Updating..." : "Adding..."
+                  : editingId ? "Update Product" : "Add Product"
+                }
+              </button>
+            </div>
           </form>
         </div>
       </div>
