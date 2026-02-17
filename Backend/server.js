@@ -20,7 +20,7 @@ app.use(
 app.use(express.json());
 
 // Connect DB
-// connectDB();
+connectDB();
 
 
 
