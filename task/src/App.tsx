@@ -5,6 +5,7 @@ import "./App.css";
 import { ToastContainer } from "react-toastify";
 import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
+import Product from "./pages/Product";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-
+        <Route path="/product" element={<Product/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterUser />} />
       </Routes>

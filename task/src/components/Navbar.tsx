@@ -52,7 +52,7 @@ function Navbar() {
                   }`
                 }
               >
-                Project
+                Service
               </NavLink>
             </li>
             <li>
