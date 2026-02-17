@@ -1,5 +1,5 @@
 const Product = require("../models/product");
-
+// Add product
 const AddProduct = async (req, res) => {
   try {
     const { name, price, description, category, stock, available } = req.body;
@@ -26,6 +26,7 @@ const AddProduct = async (req, res) => {
   }
 };
 
+// Get All Products
 const GetAllProducts = async (req, res) => {
   try {
     const products = await Product.find();
@@ -34,8 +35,26 @@ const GetAllProducts = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// Delete Product (placeholder - implement as needed)
+const DeleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Implement delete logic here (e.g., Product.findByIdAndDelete(id))
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    res
+      .status(200)
+      .json({ message: `Product with ID ${id} deleted successfully` });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 module.exports = {
   AddProduct,
   GetAllProducts,
+  DeleteProduct,
 };

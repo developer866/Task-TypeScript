@@ -123,7 +123,7 @@ function Product() {
       if (!response.ok) throw new Error("Failed to delete product");
 
       toast.success("Product deleted!");
-      await fetchProducts();            // ✅ Refresh list
+      await fetchProducts();            // ✅ Refresh product list after deletion
 
     } catch (error: unknown) {
       if (error instanceof Error) {
