@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 function Product() {
-  const [product, setProduct] = useState("");
-  const [formData, SetFormData] = useState({
+  const [product, setProduct] = useState({
     name: "",
     price: "",
     description: "",
   });
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -25,24 +25,36 @@ function Product() {
     };
     fetchProduct();
   }, []);
+  
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    setProduct({ ...product, [e.target.name]: e.target.value });
+    console.log(FormData)
+  };
+const handleSubmit = (e: React.FormEvent<HTMLFormElement> )=>{
+  e.preventDefault();
+
+}
   return (
     <>
       <div>{product.message}</div>;
       <section>
         <h1>Add Product</h1>
-        <form action="submit">
+        <form action="submit" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="Productname">product name</label>
-            <input type="text" />
+            <input type="text" name="name" onChange={handleChange} className="w-full max-w-md mx-auto p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6" />
           </div>
           <div>
             <label htmlFor="ProductPrice">product price</label>
-            <input type="text" />
+            <input type="text" name="price" onChange={handleChange} className="w-full max-w-md mx-auto p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6"/>
           </div>
           <div>
             <label htmlFor="ProductDescription">product decription</label>
-            <input type="text" />
+            <input type="text" name="description" onChange={handleChange} className="w-full max-w-md mx-auto p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6" />
           </div>
+          <button type="submit">Add product</button>
         </form>
       </section>
     </>
