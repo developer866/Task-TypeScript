@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { fetchProducts } from "../Api/ProductApi";
 
 interface ProductFormType {
   name: string;
@@ -30,15 +29,25 @@ const INITIAL_FORM: ProductFormType = {
   available: true,
 };
 
-function Product() {
+function ProductAdmin() {
   const [product, setProduct] = useState<ProductFormType>(INITIAL_FORM);
   const [allProducts, setAllProducts] = useState<ProductType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null); // ✅ ADDED
 
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/product");
+      if (!response.ok) throw new Error("Failed to fetch products");
+      const data = await response.json();
+      setAllProducts(data.products);
+    } catch (error: unknown) {
+      if (error instanceof Error) toast.error(error.message);
+    }
+  };
 
   useEffect(() => {
-    fetchProducts(setAllProducts);
+    fetchProducts();
   }, []);
 
   const handleChange = (
@@ -367,4 +376,4 @@ function Product() {
   );
 }
 
-export default Product;
+export default ProductAdmin;

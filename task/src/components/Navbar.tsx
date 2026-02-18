@@ -43,20 +43,6 @@ function Navbar() {
             </li>
             <li>
               <NavLink
-                to={"/Project"}
-                className={({ isActive }) =>
-                  `text-sm lg:text-base font-medium transition-colors duration-200 hover:text-blue-600 ${
-                    isActive
-                      ? "text-blue-600 border-b-2 border-blue-600 pb-1"
-                      : "text-gray-700"
-                  }`
-                }
-              >
-                Service
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
                 to={"/Product"}
                 className={({ isActive }) =>
                   `text-sm lg:text-base font-medium transition-colors duration-200 hover:text-blue-600 ${
@@ -71,6 +57,21 @@ function Navbar() {
             </li>
             <li>
               <NavLink
+                to={"/Project"}
+                className={({ isActive }) =>
+                  `text-sm lg:text-base font-medium transition-colors duration-200 hover:text-blue-600 ${
+                    isActive
+                      ? "text-blue-600 border-b-2 border-blue-600 pb-1"
+                      : "text-gray-700"
+                  }`
+                }
+              >
+                Service
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
                 to={"/taskpage"}
                 className={({ isActive }) =>
                   `text-sm lg:text-base font-medium transition-colors duration-200 hover:text-blue-600 ${
@@ -80,7 +81,7 @@ function Navbar() {
                   }`
                 }
               >
-                Taskpage
+                Taskpage(supprot)
               </NavLink>
             </li>
           </ul>
