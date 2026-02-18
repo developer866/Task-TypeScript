@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { fetchProducts } from "../Api/ProductApi";
 
 interface ProductFormType {
   name: string;
@@ -35,19 +36,9 @@ function Product() {
   const [isLoading, setIsLoading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null); // ✅ ADDED
 
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/product");
-      if (!response.ok) throw new Error("Failed to fetch products");
-      const data = await response.json();
-      setAllProducts(data.products);
-    } catch (error: unknown) {
-      if (error instanceof Error) toast.error(error.message);
-    }
-  };
 
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(setAllProducts);
   }, []);
 
   const handleChange = (
