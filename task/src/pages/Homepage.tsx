@@ -36,7 +36,7 @@ function Homepage() {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  });
 
   const collections: Collection[] = [
     {
@@ -311,7 +311,7 @@ function Homepage() {
             <input
               type="email"
               value={email}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setEmail(e.target.value)
               }
               placeholder="Enter your email"
