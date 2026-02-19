@@ -30,7 +30,7 @@ function Navbar() {
         <div className="flex justify-between items-center h-16 md:h-20">
           
           {/* Logo Section */}
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <NavLink to="/" onClick={closeMobileMenu}>
               <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-800 hover:text-blue-600 transition-colors cursor-pointer">
                 Clothing Store
