@@ -123,7 +123,7 @@ function Homepage() {
                 backgroundPosition: "center",
               }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/50 to-transparent" />
             </div>
           ))}
         </div>
@@ -133,7 +133,7 @@ function Homepage() {
             <div className="max-w-3xl">
               <h1 className="text-6xl md:text-8xl font-bold text-white mb-6 leading-tight">
                 Dress to
-                <span className="block bg-gradient-to-r from-yellow-400 to-green-500 bg-clip-text text-transparent">
+                <span className="block bg-linear-to-r from-yellow-400 to-green-500 bg-clip-text text-transparent">
                   Impress
                 </span>
               </h1>
@@ -143,7 +143,7 @@ function Homepage() {
               <div className="flex flex-wrap gap-4">
                 <a
                   href="#shop"
-                  className="px-8 py-4 bg-gradient-to-r from-yellow-400 to-green-500 text-black font-bold rounded-full hover:shadow-2xl hover:shadow-yellow-400/50 transition-all duration-300 transform hover:scale-105"
+                  className="px-8 py-4 bg-linear-to-r from-yellow-400 to-green-500 text-black font-bold rounded-full hover:shadow-2xl hover:shadow-yellow-400/50 transition-all duration-300 transform hover:scale-105"
                 >
                   Shop Now
                 </a>
@@ -181,7 +181,7 @@ function Homepage() {
             <h2 className="text-5xl font-bold text-black mb-4">
               Our Collections
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-green-500 mx-auto"></div>
+            <div className="w-24 h-1 bg-linear-to-r from-yellow-400 to-green-500 mx-auto"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -190,14 +190,14 @@ function Homepage() {
                 key={index}
                 className="group relative overflow-hidden rounded-2xl cursor-pointer transform hover:scale-105 transition-all duration-500"
               >
-                <div className="aspect-[3/4] overflow-hidden">
+                <div className="aspect-3/4 overflow-hidden">
                   <img
                     src={collection.image}
                     alt={collection.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-300" />
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <h3 className="text-3xl font-bold text-white mb-2">
                     {collection.title}
@@ -227,7 +227,7 @@ function Homepage() {
             <h2 className="text-5xl font-bold text-white mb-4">
               Why Choose Us
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-green-500 mx-auto"></div>
+            <div className="w-24 h-1 bg-linear-to-r from-yellow-400 to-green-500 mx-auto"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -258,7 +258,7 @@ function Homepage() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-gradient-to-br from-yellow-400 via-green-500 to-yellow-400">
+      <section className="py-20 bg-linear-to-br from-yellow-400 via-green-500 to-yellow-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-5xl font-bold text-black mb-4">
@@ -311,7 +311,7 @@ function Homepage() {
             />
             <button
               type="submit"
-              className="px-8 py-4 bg-gradient-to-r from-yellow-400 to-green-500 text-black font-bold rounded-full hover:shadow-2xl hover:shadow-yellow-400/50 transition-all duration-300 transform hover:scale-105"
+              className="px-8 py-4 bg-linear-to-r from-yellow-400 to-green-500 text-black font-bold rounded-full hover:shadow-2xl hover:shadow-yellow-400/50 transition-all duration-300 transform hover:scale-105"
             >
               Subscribe
             </button>
