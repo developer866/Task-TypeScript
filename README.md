@@ -1,451 +1,468 @@
-# 📝 Task Manager
+# 🛍️ VOGUE - Premium Clothing Store
 
-A modern, intuitive, and feature-rich task management application built with React and TypeScript. Manage your daily tasks efficiently with a clean interface, persistent storage, and real-time statistics.
+A modern, full-stack e-commerce platform for fashion enthusiasts. Built with the MERN stack (MongoDB, Express, React, Node.js) featuring user authentication, product management, and a stunning UI.
 
-![Task Manager](https://img.shields.io/badge/React-18+-blue.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue.svg)
-![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3+-38B2AC.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-
----
-
-## 🌟 Features
-
-### Core Functionality
-- ✅ **Add Tasks** - Quickly create new tasks with a simple input interface
-- ✅ **Mark as Complete** - Toggle tasks between open and completed states
-- ✅ **Delete Tasks** - Remove individual tasks or clear all at once
-- ✅ **Persistent Storage** - All tasks are saved to localStorage and persist across browser sessions
-- ✅ **Real-time Statistics** - View open, completed, and total task counts at a glance
-
-### User Experience
-- 🎨 **Modern UI** - Beautiful gradient backgrounds and smooth animations
-- 📱 **Responsive Design** - Works seamlessly on desktop, tablet, and mobile devices
-- ⚡ **Fast & Lightweight** - Optimized performance with minimal dependencies
-- 🔄 **Instant Updates** - Changes reflect immediately without page reloads
-- 🎯 **Visual Feedback** - Color-coded task states and hover effects
-
-### Organization
-- 📊 **Task Segregation** - Separate sections for open and completed tasks
-- 🔢 **Statistics Dashboard** - Quick overview cards showing task metrics
-- 🗑️ **Bulk Actions** - Clear all tasks with a single click
-- ✨ **Empty States** - Friendly messages when no tasks are present
+![VOGUE Store](https://img.shields.io/badge/Status-Active-success)
+![TypeScript](https://img.shields.io/badge/TypeScript-4.9+-blue)
+![React](https://img.shields.io/badge/React-18+-61DAFB)
+![Node.js](https://img.shields.io/badge/Node.js-18+-339933)
 
 ---
 
-## 🚀 Demo
+## 📋 Table of Contents
 
-### Screenshots
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Getting Started](#-getting-started)
+- [Project Structure](#-project-structure)
+- [API Documentation](#-api-documentation)
+- [Environment Variables](#-environment-variables)
+- [Scripts](#-scripts)
+- [Screenshots](#-screenshots)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-**Main Dashboard**
-- Clean interface with input field at the top
-- Three statistics cards showing task counts
-- Organized task lists with action buttons
+---
 
-**Task States**
-- **Open Tasks**: Blue-themed cards with "Mark as Done" and "Delete" buttons
-- **Completed Tasks**: Green-themed cards with strikethrough text and "Undo" button
+## ✨ Features
+
+### 🎨 User Interface
+- **Stunning Landing Page** with auto-sliding hero carousel
+- **Responsive Design** - Works seamlessly on mobile, tablet, and desktop
+- **Modern UI** - Black, white, green, and yellow color scheme
+- **Smooth Animations** - Hover effects and transitions throughout
+- **Product Collections** - Browse curated fashion collections
+
+### 🔐 Authentication & Authorization
+- **JWT-based Authentication** with access & refresh tokens
+- **User Registration** with password hashing (bcrypt)
+- **Secure Login** with token-based sessions
+- **Role-based Access** (User, Seller, Admin)
+- **Redux State Management** for global auth state
+- **Redux Persist** - Stay logged in across sessions
+
+### 🛒 Product Management (CRUD)
+- **Create Products** - Add new items with details
+- **Read Products** - Browse all available products
+- **Update Products** - Edit existing product information
+- **Delete Products** - Remove products from inventory
+- **Product Fields:**
+  - Name, Description, Price
+  - Category (Electronics, Clothing, Food, Furniture, Other)
+  - Stock Quantity
+  - Availability Toggle
+
+### 📊 Additional Features
+- **Product Table** with sortable columns
+- **Real-time Updates** after CRUD operations
+- **Form Validation** on client and server
+- **Error Handling** with toast notifications
+- **Newsletter Subscription**
+- **Testimonials Section**
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React 18+** - Modern UI library with hooks
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first CSS framework
-- **Vite** - Next-generation frontend tooling
+- **React** 18+ with TypeScript
+- **React Router DOM** for navigation
+- **Redux Toolkit** for state management
+- **Redux Persist** for persistent storage
+- **Tailwind CSS** for styling
+- **React Toastify** for notifications
 
-### Storage
-- **localStorage API** - Browser-based persistent storage
-
-### Architecture
-- Component-based architecture
-- TypeScript interfaces for type safety
-- React hooks for state management
-- Functional components with modern React patterns
+### Backend
+- **Node.js** with Express
+- **MongoDB** with Mongoose ODM
+- **JWT** for authentication
+- **bcrypt** for password hashing
+- **CORS** enabled
+- **dotenv** for environment variables
 
 ---
 
-## 📦 Installation
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn package manager
 
-### Setup Instructions
+Make sure you have the following installed:
+- **Node.js** (v18 or higher)
+- **npm** or **yarn**
+- **MongoDB** (local or Atlas)
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/task-manager.git
-   cd task-manager
-   ```
+### Installation
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+#### 1. Clone the repository
+```bash
+git clone https://github.com/yourusername/vogue-store.git
+cd vogue-store
+```
 
-3. **Start the development server**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
+#### 2. Install Backend Dependencies
+```bash
+cd backend
+npm install
+```
 
-4. **Open your browser**
-   Navigate to `http://localhost:5173` (or the port shown in your terminal)
+#### 3. Install Frontend Dependencies
+```bash
+cd ../frontend
+npm install
+```
 
----
+#### 4. Set up Environment Variables
 
-## 🎮 Usage
+**Backend** - Create `backend/.env`:
+```env
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/vogue-store
+TOKEN_SECRET=your_jwt_secret_key_here
+REFRESH_TOKEN_SECRET=your_refresh_token_secret_here
+NODE_ENV=development
+```
 
-### Adding a Task
-1. Type your task in the input field at the top
-2. Click the "Add Task" button or press Enter
-3. Your task will appear in the "Open Tasks" section
+**Frontend** - Create `frontend/.env`:
+```env
+VITE_API_URL=http://localhost:5000/api
+```
 
-### Completing a Task
-1. Find the task in the "Open Tasks" section
-2. Click the "Mark as Done" button
-3. The task will move to the "Completed Tasks" section with strikethrough styling
+#### 5. Start MongoDB
+```bash
+# If using local MongoDB
+mongod
+```
 
-### Undoing a Completed Task
-1. Find the task in the "Completed Tasks" section
-2. Click the "Undo" button
-3. The task will move back to "Open Tasks"
+#### 6. Run the Application
 
-### Deleting a Task
-1. Click the "Delete" button on any task (open or completed)
-2. The task will be permanently removed
+**Terminal 1 - Backend:**
+```bash
+cd backend
+npm run dev
+```
 
-### Clearing All Tasks
-1. Scroll to the bottom of the page
-2. Click the "Clear All Tasks" button
-3. All tasks will be removed from both sections and localStorage
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm run dev
+```
+
+The app will be running at:
+- **Frontend:** http://localhost:5173
+- **Backend:** http://localhost:5000
 
 ---
 
 ## 📁 Project Structure
-
 ```
-task-manager/
-├── public/              # Static assets
-├── src/
-│   ├── components/      # React components
-│   │   ├── InputField.tsx    # Task input component
-│   │   └── model.ts          # TypeScript interfaces
-│   ├── App.tsx         # Main application component
-│   ├── App.css         # Global styles
-│   ├── main.tsx        # Application entry point
-│   └── index.css       # Tailwind CSS imports
-├── package.json        # Dependencies and scripts
-├── tsconfig.json       # TypeScript configuration
-├── tailwind.config.js  # Tailwind CSS configuration
-├── vite.config.ts      # Vite configuration
-└── README.md          # Project documentation
+vogue-store/
+│
+├── frontend/                 # React TypeScript Frontend
+│   ├── src/
+│   │   ├── components/       # Reusable components
+│   │   │   ├── Navbar.tsx
+│   │   │   └── ProtectedRoute.tsx
+│   │   ├── pages/            # Page components
+│   │   │   ├── Homepage.tsx
+│   │   │   ├── Login.tsx
+│   │   │   ├── RegisterUser.tsx
+│   │   │   ├── Product.tsx
+│   │   │   └── Taskpage.tsx
+│   │   ├── store/            # Redux setup
+│   │   │   ├── store.ts
+│   │   │   ├── hooks.ts
+│   │   │   └── slices/
+│   │   │       └── authSlice.ts
+│   │   ├── Api/              # API functions
+│   │   │   ├── LoginApi.ts
+│   │   │   ├── RegisterApi.ts
+│   │   │   └── ProductApi.ts
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── backend/                  # Node.js Express Backend
+│   ├── models/               # Mongoose models
+│   │   ├── user.js
+│   │   └── product.js
+│   ├── controllers/          # Route controllers
+│   │   ├── userController.js
+│   │   └── productController.js
+│   ├── routes/               # API routes
+│   │   ├── userRoutes.js
+│   │   └── productRoutes.js
+│   ├── middleware/           # Custom middleware
+│   │   └── auth.js
+│   ├── config/               # Configuration files
+│   │   └── db.js
+│   ├── server.js             # Entry point
+│   ├── package.json
+│   └── .env
+│
+└── README.md
 ```
 
 ---
 
-## 🧩 Component Breakdown
+## 📡 API Documentation
 
-### `App.tsx`
-The main application component that manages:
-- Task state using React hooks
-- localStorage synchronization
-- Task operations (add, delete, complete, clear)
-- Statistics calculations
-- Rendering of task lists and UI sections
+### Base URL
+```
+http://localhost:5000/api
+```
 
-**Key Features:**
-- State management with `useState`
-- localStorage integration for persistence
-- Computed values for statistics
-- Event handlers for all user actions
+### Authentication Endpoints
 
-### `InputField.tsx`
-A reusable input component that handles:
-- Task input field
-- Form submission
-- Add task button
+#### Register User
+```http
+POST /users/register
+Content-Type: application/json
 
-**Props:**
-- `todo`: Current input value
-- `setTodo`: Function to update input value
-- `handleAdd`: Form submission handler
-
-### `model.ts`
-TypeScript type definitions:
-```typescript
-export interface Todo {
-  id: number;        // Unique identifier (timestamp)
-  todo: string;      // Task description
-  isDone: boolean;   // Completion status
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "SecurePass123",
+  "role": "user"
 }
 ```
 
----
-
-## 🎨 Styling Guide
-
-### Color Scheme
-- **Primary Blue**: `#3B82F6` - Open tasks, primary actions
-- **Success Green**: `#10B981` - Completed tasks, completion actions
-- **Danger Red**: `#EF4444` - Delete actions
-- **Purple Accent**: `#8B5CF6` - Statistics
-- **Neutral Grays**: Various shades for backgrounds and text
-
-### Design Principles
-- **Minimalist**: Clean, uncluttered interface
-- **Intuitive**: Clear visual hierarchy and action buttons
-- **Responsive**: Mobile-first design approach
-- **Accessible**: Proper contrast ratios and interactive states
-
-### Tailwind Classes Used
-- Flexbox and Grid layouts
-- Gradient backgrounds
-- Rounded corners and shadows
-- Hover and focus states
-- Smooth transitions
-- Responsive breakpoints
-
----
-
-## 💾 Data Persistence
-
-### localStorage Implementation
-
-**Storage Key:** `"todos"`
-
-**Data Format:**
+**Response:**
 ```json
-[
-  {
-    "id": 1704067200000,
-    "todo": "Complete project documentation",
-    "isDone": false
-  },
-  {
-    "id": 1704153600000,
-    "todo": "Review pull requests",
-    "isDone": true
+{
+  "message": "User registered successfully",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "507f1f77bcf86cd799439011",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "user"
   }
-]
+}
 ```
 
-**Operations:**
-- **Save**: Automatically saves after every task modification
-- **Load**: Reads from localStorage on component mount
-- **Clear**: Removes all data when clearing tasks
+#### Login
+```http
+POST /users/login
+Content-Type: application/json
 
-**Note:** Data is stored in the browser and will persist until:
-- The user clears browser data
-- The user clicks "Clear All Tasks"
-- localStorage is programmatically cleared
+{
+  "email": "john@example.com",
+  "password": "SecurePass123"
+}
+```
 
----
-
-## 🔧 Configuration
-
-### Tailwind CSS Setup
-
-1. **Installation**
-   ```bash
-   npm install -D tailwindcss postcss autoprefixer
-   npx tailwindcss init -p
-   ```
-
-2. **Configure `tailwind.config.js`**
-   ```javascript
-   /** @type {import('tailwindcss').Config} */
-   export default {
-     content: [
-       "./index.html",
-       "./src/**/*.{js,ts,jsx,tsx}",
-     ],
-     theme: {
-       extend: {},
-     },
-     plugins: [],
-   }
-   ```
-
-3. **Add to `index.css`**
-   ```css
-   @tailwind base;
-   @tailwind components;
-   @tailwind utilities;
-   ```
+#### Get All Users (Protected)
+```http
+GET /users
+Authorization: Bearer <token>
+```
 
 ---
 
-## 🚀 Build & Deployment
+### Product Endpoints
 
-### Build for Production
+#### Get All Products
+```http
+GET /product
+```
 
+**Response:**
+```json
+{
+  "success": true,
+  "products": [
+    {
+      "_id": "507f1f77bcf86cd799439011",
+      "name": "Classic T-Shirt",
+      "description": "Premium cotton t-shirt",
+      "price": 29.99,
+      "category": "clothing",
+      "stock": 100,
+      "available": true,
+      "createdAt": "2025-01-15T10:30:00.000Z",
+      "updatedAt": "2025-01-15T10:30:00.000Z"
+    }
+  ]
+}
+```
+
+#### Add Product
+```http
+POST /product/addproduct
+Content-Type: application/json
+
+{
+  "name": "Classic T-Shirt",
+  "description": "Premium cotton t-shirt",
+  "price": 29.99,
+  "category": "clothing",
+  "stock": 100,
+  "available": true
+}
+```
+
+#### Update Product
+```http
+PUT /product/:id
+Content-Type: application/json
+
+{
+  "name": "Updated T-Shirt",
+  "price": 24.99,
+  "stock": 150
+}
+```
+
+#### Delete Product
+```http
+DELETE /product/:id
+```
+
+---
+
+## 🔐 Environment Variables
+
+### Backend (.env)
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `PORT` | Server port | `5000` |
+| `MONGO_URI` | MongoDB connection string | `mongodb://localhost:27017/vogue-store` |
+| `TOKEN_SECRET` | JWT access token secret | `your_secret_key` |
+| `REFRESH_TOKEN_SECRET` | JWT refresh token secret | `your_refresh_secret` |
+| `NODE_ENV` | Environment | `development` or `production` |
+
+### Frontend (.env)
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `VITE_API_URL` | Backend API URL | `http://localhost:5000/api` |
+
+---
+
+## 📜 Scripts
+
+### Backend
 ```bash
-npm run build
-# or
-yarn build
+npm start          # Start production server
+npm run dev        # Start development server with nodemon
 ```
 
-This creates an optimized production build in the `dist/` folder.
-
-### Preview Production Build
-
+### Frontend
 ```bash
-npm run preview
-# or
-yarn preview
+npm run dev        # Start Vite dev server
+npm run build      # Build for production
+npm run preview    # Preview production build
+npm run lint       # Run ESLint
 ```
-
-### Deployment Options
-
-#### Vercel
-```bash
-npm install -g vercel
-vercel
-```
-
-#### Netlify
-```bash
-npm install -g netlify-cli
-netlify deploy
-```
-
-#### GitHub Pages
-1. Install gh-pages: `npm install -D gh-pages`
-2. Add to `package.json`:
-   ```json
-   "scripts": {
-     "predeploy": "npm run build",
-     "deploy": "gh-pages -d dist"
-   }
-   ```
-3. Run: `npm run deploy`
 
 ---
 
-## 🧪 Testing
+## 🖼️ Screenshots
 
-### Manual Testing Checklist
+### Homepage
+![Homepage](screenshots/homepage.png)
 
-- [ ] Add a new task
-- [ ] Mark task as complete
-- [ ] Undo completed task
-- [ ] Delete individual task
-- [ ] Clear all tasks
-- [ ] Refresh page (verify persistence)
-- [ ] Test with empty input
-- [ ] Test with long task names
-- [ ] Test on mobile device
-- [ ] Test in different browsers
+### Product Management
+![Products](screenshots/products.png)
 
-### Future Testing Plans
-- Unit tests with Vitest
-- Component tests with React Testing Library
-- E2E tests with Playwright or Cypress
-
----
-
-## 🐛 Known Issues
-
-Currently no known issues. If you discover a bug, please open an issue on GitHub.
-
----
-
-## 🗺️ Roadmap
-
-### Version 1.1 (Planned)
-- [ ] Edit existing tasks
-- [ ] Task categories/tags
-- [ ] Due dates
-- [ ] Priority levels
-- [ ] Search and filter functionality
-
-### Version 1.2 (Future)
-- [ ] Dark mode toggle
-- [ ] Export tasks (JSON, CSV)
-- [ ] Task notes/descriptions
-- [ ] Drag and drop reordering
-- [ ] Keyboard shortcuts
-
-### Version 2.0 (Long-term)
-- [ ] Backend integration
-- [ ] User authentication
-- [ ] Cloud synchronization
-- [ ] Collaboration features
-- [ ] Mobile app (React Native)
+### Login
+![Login](screenshots/login.png)
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Here's how you can help:
+Contributions are welcome! Please follow these steps:
 
 1. **Fork the repository**
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-3. **Commit your changes**
-   ```bash
-   git commit -m 'Add some amazing feature'
-   ```
-4. **Push to the branch**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
+2. **Create a feature branch** (`git checkout -b feature/AmazingFeature`)
+3. **Commit your changes** (`git commit -m 'Add some AmazingFeature'`)
+4. **Push to the branch** (`git push origin feature/AmazingFeature`)
 5. **Open a Pull Request**
-
-### Contribution Guidelines
-- Follow the existing code style
-- Write meaningful commit messages
-- Update documentation as needed
-- Test your changes thoroughly
-- Keep pull requests focused on a single feature/fix
 
 ---
 
-## 📝 License
+## 📝 Development Roadmap
+
+- [ ] Add shopping cart functionality
+- [ ] Implement payment gateway (Stripe/PayPal)
+- [ ] Add order management system
+- [ ] Implement product reviews and ratings
+- [ ] Add wishlist feature
+- [ ] Implement advanced search and filters
+- [ ] Add admin dashboard
+- [ ] Email verification for new users
+- [ ] Password reset functionality
+- [ ] Add image upload for products
+
+---
+
+## 🐛 Known Issues
+
+- None currently reported
+
+---
+
+## 📧 Contact
+
+**Developer:** Your Name  
+**Email:** your.email@example.com  
+**GitHub:** [@yourusername](https://github.com/yourusername)  
+**LinkedIn:** [Your LinkedIn](https://linkedin.com/in/yourprofile)
+
+---
+
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 👤 Author
-
-**Your Name**
-- GitHub: [@yourusername](https://github.com/Developer866)
-- Email: opeyemijoseph866@gmail.com
-
----
-
 ## 🙏 Acknowledgments
 
-- React team for the amazing framework
-- Tailwind CSS for the utility-first CSS framework
-- Vite for blazing fast development experience
-- The open-source community for inspiration
+- [React Documentation](https://react.dev/)
+- [MongoDB Documentation](https://docs.mongodb.com/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Redux Toolkit](https://redux-toolkit.js.org/)
+- Icons from [Unsplash](https://unsplash.com/)
 
 ---
 
-## 📞 Support
+<div align="center">
 
-If you have any questions or need help, feel free to:
-- Open an issue on GitHub
-- Reach out via email
-- Check the documentation
+**Made with ❤️ by [Your Name]**
 
----
+⭐ Star this repo if you found it helpful!
 
-## ⭐ Show Your Support
-
-If you found this project helpful, please give it a ⭐ on GitHub!
+</div>
+```
 
 ---
 
-**Built with ❤️ using React and TypeScript**
+## 🎁 Bonus: Add a LICENSE file
+
+Create `LICENSE` file in root:
+```
+MIT License
+
+Copyright (c) 2025 Your Name
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

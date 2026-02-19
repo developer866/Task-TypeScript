@@ -1,5 +1,3 @@
-// src/pages/Homepage.tsx
-import { Link } from "react-router-dom";
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 
 interface Collection {
@@ -42,17 +40,20 @@ function Homepage() {
   const collections: Collection[] = [
     {
       title: "Summer Collection",
-      image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600",
+      image:
+        "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600",
       color: "yellow",
     },
     {
       title: "Urban Essentials",
-      image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600",
+      image:
+        "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600",
       color: "green",
     },
     {
       title: "Premium Line",
-      image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=600",
+      image:
+        "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=600",
       color: "white",
     },
   ];
@@ -107,7 +108,6 @@ function Homepage() {
 
   return (
     <div className="bg-black min-h-screen">
-     
       {/* Hero Section with Slider */}
       <section className="relative h-screen">
         <div className="absolute inset-0 overflow-hidden">
@@ -207,8 +207,8 @@ function Homepage() {
                       collection.color === "yellow"
                         ? "bg-yellow-400 text-black"
                         : collection.color === "green"
-                        ? "bg-green-500 text-white"
-                        : "bg-white text-black"
+                          ? "bg-green-500 text-white"
+                          : "bg-white text-black"
                     }`}
                   >
                     Explore →
@@ -244,8 +244,8 @@ function Homepage() {
                     feature.color === "yellow"
                       ? "text-yellow-400"
                       : feature.color === "green"
-                      ? "text-green-500"
-                      : "text-white"
+                        ? "text-green-500"
+                        : "text-white"
                   }`}
                 >
                   {feature.title}
@@ -274,9 +274,13 @@ function Homepage() {
                 className="bg-black rounded-2xl p-8 transform hover:scale-105 transition-all duration-300"
               >
                 <div className="flex mb-4">
-                  {Array.from({ length: testimonial.rating }).map((_, i: number) => (
-                    <span key={i} className="text-yellow-400 text-2xl">★</span>
-                  ))}
+                  {Array.from({ length: testimonial.rating }).map(
+                    (_, i: number) => (
+                      <span key={i} className="text-yellow-400 text-2xl">
+                        ★
+                      </span>
+                    ),
+                  )}
                 </div>
                 <p className="text-white mb-6 text-lg italic">
                   "{testimonial.text}"
@@ -294,17 +298,21 @@ function Homepage() {
       {/* Newsletter */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-5xl font-bold text-black mb-4">
-            Stay in Style
-          </h2>
+          <h2 className="text-5xl font-bold text-black mb-4">Stay in Style</h2>
           <p className="text-xl text-gray-600 mb-8">
-            Subscribe to get exclusive offers and early access to new collections
+            Subscribe to get exclusive offers and early access to new
+            collections
           </p>
-          <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
+          <form
+            onSubmit={handleNewsletterSubmit}
+            className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto"
+          >
             <input
               type="email"
               value={email}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
               placeholder="Enter your email"
               required
               className="flex-1 px-6 py-4 rounded-full border-2 border-black focus:outline-none focus:border-yellow-400 transition-colors"
@@ -318,7 +326,6 @@ function Homepage() {
           </form>
         </div>
       </section>
-
     </div>
   );
 }

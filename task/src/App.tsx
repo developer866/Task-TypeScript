@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Admin from "./pages/Admin/Admin";
 import ProductClients from "./pages/ProductClients";
 import Homepage from "./pages/Homepage";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/register" element={<RegisterUser />} />
       </Routes>
       <ToastContainer />
+      <Footer />
     </main>
   );
 }

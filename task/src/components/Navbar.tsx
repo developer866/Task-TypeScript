@@ -52,7 +52,7 @@ function Navbar() {
                   }`
                 }
               >
-                Product
+                Shop
               </NavLink>
             </li>
             <li>
@@ -66,7 +66,7 @@ function Navbar() {
                   }`
                 }
               >
-                Service
+                Collection
               </NavLink>
             </li>
 
@@ -81,7 +81,7 @@ function Navbar() {
                   }`
                 }
               >
-                Taskpage(supprot)
+                Support
               </NavLink>
             </li>
           </ul>
