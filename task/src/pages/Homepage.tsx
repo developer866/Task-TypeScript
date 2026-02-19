@@ -1,4 +1,5 @@
-import { useState, useEffect, FormEvent, ChangeEvent } from "react";
+import { useState, useEffect} from "react";
+
 
 interface Collection {
   title: string;
@@ -100,7 +101,7 @@ function Homepage() {
     },
   ];
 
-  const handleNewsletterSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     alert(`Thanks for subscribing: ${email}`);
     setEmail("");

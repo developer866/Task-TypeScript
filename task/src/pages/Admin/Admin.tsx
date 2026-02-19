@@ -1,4 +1,3 @@
-import React from "react";
 import ProductAdmin from "./ProductAdmin";
 function Admin() {
   return (
