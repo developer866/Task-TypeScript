@@ -8,12 +8,14 @@ import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Admin from "./pages/Admin/Admin";
 import ProductClients from "./pages/ProductClients";
+import Homepage from "./pages/Homepage";
 
 function App() {
   return (
     <main>
       <Navbar />
       <Routes>
+        <Route path="/" element={<Homepage />}/>
         <Route
           path="/taskpage"
           element={

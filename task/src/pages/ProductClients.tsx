@@ -12,7 +12,7 @@ interface ProductType {
 }
 
 function ProductClients() {
-  const [produt, setProducts] = useState<ProductType[]>([]);
+  const [product, setProducts] = useState<ProductType[]>([]);
   const fetchProduct = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/product");
@@ -29,6 +29,7 @@ function ProductClients() {
   };
   useEffect(() => {
     fetchProduct();
+    console.log(product)
   });
   return (
     <section>
@@ -36,9 +37,7 @@ function ProductClients() {
       <p className="text-3xl text-center">
         display client shopping page under construction
       </p>
-      {produt.filter().map((key )=> {
-        <div></div>
-      })}
+      
     </section>
   );
 }
