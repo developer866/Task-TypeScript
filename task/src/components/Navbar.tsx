@@ -5,14 +5,14 @@ import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+import { useAppSelector } from "../app/hooks";
+
 function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = useSelector((state: RootState) => state.auth.token);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Simulated cart count - replace with actual Redux state later
-  const cartItemCount = 3;
+  const cartItemCount = useAppSelector((state) => state.cart.totalItems);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -28,7 +28,6 @@ function Navbar() {
     <nav className="bg-white shadow-md sticky top-0 z-50 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
-          
           {/* Logo Section */}
           <div className="shrink-0">
             <NavLink to="/" onClick={closeMobileMenu}>
@@ -92,7 +91,6 @@ function Navbar() {
 
           {/* Right Side: Cart + Auth Buttons (Desktop & Mobile) */}
           <div className="flex items-center gap-2 sm:gap-3">
-            
             {/* 🛒 Cart Icon - Always Visible */}
             <NavLink
               to="/cart"
@@ -191,7 +189,6 @@ function Navbar() {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 py-4">
             <div className="flex flex-col space-y-3">
-              
               {/* Mobile Navigation Links */}
               <NavLink
                 to="/"
