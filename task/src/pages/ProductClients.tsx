@@ -11,7 +11,7 @@ interface ProductType {
   description: string;
   category: string;
   stock: number;
-  available: boolean;
+  avaliable: boolean;
 }
 
 function Shop() {
@@ -62,7 +62,7 @@ function Shop() {
         description: product.description,
         category: product.category,
         stock: product.stock,
-      })
+      }),
     );
 
     toast.success(`${product.name} added to cart!`);
@@ -80,6 +80,8 @@ function Shop() {
 
   const categories = ["all", ...new Set(products.map((p) => p.category))];
 
+
+// Load spinner(spins before page loads)
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -156,8 +158,8 @@ function Shop() {
                         product.stock > 10
                           ? "text-green-600"
                           : product.stock > 0
-                          ? "text-orange-600"
-                          : "text-red-600"
+                            ? "text-orange-600"
+                            : "text-red-600"
                       }`}
                     >
                       {product.stock > 0
@@ -169,12 +171,12 @@ function Shop() {
                   <button
                     onClick={() => handleAddToCart(product)}
                     disabled={
-                      !product.available ||
+                      !product.avaliable ||
                       product.stock === 0 ||
                       quantityInCart >= product.stock
                     }
                     className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-                      !product.available ||
+                      !product.avaliable ||
                       product.stock === 0 ||
                       quantityInCart >= product.stock
                         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -197,8 +199,8 @@ function Shop() {
                     {quantityInCart > 0
                       ? `In Cart (${quantityInCart})`
                       : product.stock === 0
-                      ? "Out of Stock"
-                      : "Add to Cart"}
+                        ? "Out of Stock"
+                        : "Add to Cart"}
                   </button>
                 </div>
               </div>
@@ -219,3 +221,5 @@ function Shop() {
 }
 
 export default Shop;
+
+
