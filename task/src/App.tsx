@@ -12,12 +12,17 @@ import Homepage from "./pages/Homepage";
 import Footer from "./components/Footer";
 import Cart from "./pages/Cart";
 
+import Checkout from "./pages/Checkout";
+import TrackOrder from "./pages/TrackOrder";
+import MyOrders from "./pages/MyOrder";
+import AdminOrders from "./pages/Admin/AdminOrders";
+
 function App() {
   return (
     <main>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Homepage />}/>
+        <Route path="/" element={<Homepage />} />
         <Route
           path="/taskpage"
           element={
@@ -30,7 +35,12 @@ function App() {
         <Route path="/product" element={<Shop />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterUser />} />
-        <Route path="/cart" element={<Cart />}/>
+        <Route path="/cart" element={<Cart />} />
+
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/track-order/:orderId?" element={<TrackOrder />} />
+        <Route path="/my-orders" element={<MyOrders />} />
+        <Route path="/admin/orders" element={<AdminOrders />} />
       </Routes>
       <ToastContainer />
       <Footer />

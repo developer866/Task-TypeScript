@@ -5,13 +5,14 @@ import {
   updateQuantity,
   clearCart,
 } from "../features/cart/cartSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 function Cart() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { items, totalItems, totalPrice } = useAppSelector(
-    (state) => state.cart
+    (state) => state.cart,
   );
 
   const handleRemove = (id: string, name: string) => {
@@ -89,7 +90,7 @@ function Cart() {
                 key={item._id}
                 className="bg-white rounded-lg shadow-md p-4 sm:p-6 flex flex-col sm:flex-row gap-4"
               >
-                <div className="w-full sm:w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-full sm:w-24 h-24 bg-liinear-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center flex-shrink-0">
                   <span className="text-4xl">👕</span>
                 </div>
 
@@ -166,7 +167,9 @@ function Cart() {
                 </div>
               </div>
 
-              <button className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 active:scale-95 transition-all duration-300 shadow-md hover:shadow-lg mb-3">
+              <button
+              onClick={() => navigate('/Checkout')}
+               className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 active:scale-95 transition-all duration-300 shadow-md hover:shadow-lg mb-3">
                 Proceed to Checkout
               </button>
 
