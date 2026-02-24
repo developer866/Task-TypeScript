@@ -21,12 +21,21 @@ const orderSchema = new mongoose.Schema(
     orderId: {
       type: String,
       unique: true,
-      required: true,
+      required: false, // ✅ Changed from true to false
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false, // ✅ Changed from true to false (for guest orders)
+    },
+    guestInfo: {
+      name: String,
+      email: String,
+      phone: String,
+    },
+    isGuest: {
+      type: Boolean,
+      default: false,
     },
     items: [orderItemSchema],
     totalAmount: {
@@ -41,9 +50,7 @@ const orderSchema = new mongoose.Schema(
     paymentStatus: {
       type: String,
       enum: ["pending", "completed", "failed"],
-      default: function() {
-        return this.paymentMethod === "online" ? "completed" : "pending";
-      },
+      default: "pending",
     },
     orderStatus: {
       type: String,
@@ -78,14 +85,13 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Generate unique order ID
-orderSchema.pre("save", async function (next) {
+// ✅ Generate unique order ID BEFORE validation
+orderSchema.pre("validate", function (next) {
   if (!this.orderId) {
-    const timestamp = Date.now().toString(36);
+    const timestamp = Date.now().toString(36).toUpperCase();
     const random = Math.random().toString(36).substr(2, 5).toUpperCase();
     this.orderId = `ORD-${timestamp}-${random}`;
   }
-  next();
 });
 
 module.exports = mongoose.model("Order", orderSchema);

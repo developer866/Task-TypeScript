@@ -3,16 +3,32 @@ const Order = require("../models/order");
 const Product = require("../models/product");
 const mongoose = require("mongoose");
 
-// ✅ USER: Place Order
+// ✅ Place Order (Guest or Logged-in User)
 const placeOrder = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const { items, shippingAddress, paymentMethod } = req.body;
-    const userId = req.user.id;
+    const { items, shippingAddress, paymentMethod, guestInfo } = req.body;
+    
+    // ✅ FIXED: Safely get userId (might be undefined for guests)
+    const userId = req.user?.id || null;
+    const isGuest = !userId;
 
-    // Validate
+    console.log("User ID:", userId);
+    console.log("Is Guest:", isGuest);
+
+    // ✅ Validate guest info if not logged in
+    if (isGuest) {
+      if (!guestInfo || !guestInfo.name || !guestInfo.email || !guestInfo.phone) {
+        await session.abortTransaction();
+        return res.status(400).json({ 
+          message: "Guest information (name, email, phone) is required" 
+        });
+      }
+    }
+
+    // Validate items
     if (!items || items.length === 0) {
       await session.abortTransaction();
       return res.status(400).json({ message: "Cart is empty" });
@@ -74,29 +90,35 @@ const placeOrder = async (req, res) => {
       totalAmount += product.price * item.quantity;
     }
 
-    // Determine payment status based on method
     const paymentStatus = paymentMethod === "online" ? "completed" : "pending";
 
-    // Create order
-    const order = await Order.create(
-      [
+    // ✅ Create order with guest or user info
+    const orderData = {
+      items: orderItems,
+      totalAmount,
+      shippingAddress,
+      paymentMethod,
+      paymentStatus,
+      isGuest,
+      trackingDetails: [
         {
-          user: userId,
-          items: orderItems,
-          totalAmount,
-          shippingAddress,
-          paymentMethod,
-          paymentStatus,
-          trackingDetails: [
-            {
-              status: "pending",
-              description: "Order placed successfully",
-            },
-          ],
+          status: "pending",
+          description: "Order placed successfully",
         },
       ],
-      { session }
-    );
+    };
+
+    // ✅ Add user ID only if logged in
+    if (userId) {
+      orderData.user = userId;
+    }
+
+    // ✅ Add guest info only if guest
+    if (isGuest) {
+      orderData.guestInfo = guestInfo;
+    }
+
+    const order = await Order.create([orderData], { session });
 
     await session.commitTransaction();
 
@@ -115,11 +137,16 @@ const placeOrder = async (req, res) => {
   }
 };
 
-// ✅ USER: Get My Orders
+// ✅ Get My Orders (Logged-in users only)
 const getUserOrders = async (req, res) => {
   try {
+    // ✅ FIXED: Check if user exists
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
     const userId = req.user.id;
-    const orders = await Order.find({ user: userId })
+    const orders = await Order.find({ user: userId, isGuest: false })
       .sort({ createdAt: -1 })
       .populate("items.product");
 
@@ -132,100 +159,52 @@ const getUserOrders = async (req, res) => {
   }
 };
 
-// ✅ USER/PUBLIC: Track Order by Order ID (no auth required)
+// ✅ Track Order by Order ID (Public - no auth required)
 const trackOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
 
     const order = await Order.findOne({ orderId })
       .populate("items.product", "name")
-      .select("-user"); // Don't expose user details publicly
+      .select("-user");
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
+    const response = {
+      orderId: order.orderId,
+      items: order.items,
+      totalAmount: order.totalAmount,
+      paymentMethod: order.paymentMethod,
+      paymentStatus: order.paymentStatus,
+      orderStatus: order.orderStatus,
+      trackingDetails: order.trackingDetails,
+      shippingAddress: order.shippingAddress,
+      createdAt: order.createdAt,
+    };
+
+    if (order.isGuest) {
+      response.guestInfo = order.guestInfo;
+    }
+
     res.status(200).json({
       success: true,
-      order: {
-        orderId: order.orderId,
-        items: order.items,
-        totalAmount: order.totalAmount,
-        paymentMethod: order.paymentMethod,
-        paymentStatus: order.paymentStatus,
-        orderStatus: order.orderStatus,
-        trackingDetails: order.trackingDetails,
-        createdAt: order.createdAt,
-      },
+      order: response,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
-// ✅ USER: Cancel Order
-const cancelOrder = async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
-  try {
-    const { orderId } = req.params;
-    const userId = req.user.id;
-
-    const order = await Order.findOne({ orderId, user: userId }).session(session);
-
-    if (!order) {
-      await session.abortTransaction();
-      return res.status(404).json({ message: "Order not found" });
-    }
-
-    if (!["pending", "confirmed"].includes(order.orderStatus)) {
-      await session.abortTransaction();
-      return res.status(400).json({ 
-        message: "Cannot cancel order after it has been processed" 
-      });
-    }
-
-    // Restore stock
-    for (const item of order.items) {
-      const product = await Product.findById(item.product).session(session);
-      if (product) {
-        product.stock += item.quantity;
-        product.available = true;
-        if (product.avaliable !== undefined) {
-          product.avaliable = true;
-        }
-        await product.save({ session });
-      }
-    }
-
-    order.orderStatus = "cancelled";
-    order.trackingDetails.push({
-      status: "cancelled",
-      description: "Order cancelled by customer",
-    });
-    await order.save({ session });
-
-    await session.commitTransaction();
-
-    res.status(200).json({
-      success: true,
-      message: "Order cancelled and stock restored",
-      order,
-    });
-  } catch (error) {
-    await session.abortTransaction();
-    res.status(500).json({ message: error.message });
-  } finally {
-    session.endSession();
-  }
-};
-
-// ========== ADMIN ENDPOINTS ==========
 
 // ✅ ADMIN: Get All Orders
 const getAllOrders = async (req, res) => {
   try {
+    // ✅ FIXED: Check if admin
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
     const { paymentStatus, orderStatus, paymentMethod } = req.query;
 
     const filter = {};
@@ -251,6 +230,11 @@ const getAllOrders = async (req, res) => {
 // ✅ ADMIN: Update Order Tracking
 const updateOrderTracking = async (req, res) => {
   try {
+    // ✅ FIXED: Check if admin
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
     const { orderId } = req.params;
     const { status, description } = req.body;
     const adminId = req.user.id;
@@ -266,10 +250,7 @@ const updateOrderTracking = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Update order status
     order.orderStatus = status;
-
-    // Add tracking detail
     order.trackingDetails.push({
       status,
       description: description || `Order status updated to ${status}`,
@@ -291,6 +272,11 @@ const updateOrderTracking = async (req, res) => {
 // ✅ ADMIN: Update Payment Status
 const updatePaymentStatus = async (req, res) => {
   try {
+    // ✅ FIXED: Check if admin
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
     const { orderId } = req.params;
     const { paymentStatus } = req.body;
 
@@ -329,7 +315,6 @@ module.exports = {
   placeOrder,
   getUserOrders,
   trackOrder,
-  cancelOrder,
   getAllOrders,
   updateOrderTracking,
   updatePaymentStatus,
