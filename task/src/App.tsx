@@ -16,6 +16,8 @@ import Checkout from "./pages/Checkout";
 import TrackOrder from "./pages/TrackOrder";
 import MyOrders from "./pages/MyOrder";
 import AdminOrders from "./pages/Admin/AdminOrders";
+import ProductAdmin from "./pages/Admin/ProductAdmin";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -41,6 +43,10 @@ function App() {
         <Route path="/track-order/:orderId?" element={<TrackOrder />} />
         <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/admin/products" element={<ProductAdmin />} />
+
+
+         <Route path="*" element={<NotFound />} />
       </Routes>
       <ToastContainer />
       <Footer />
