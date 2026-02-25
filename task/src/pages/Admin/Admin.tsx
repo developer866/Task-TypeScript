@@ -1,23 +1,41 @@
 import ProductAdmin from "./ProductAdmin";
+
 function Admin() {
   return (
-    <main>
-      <h1 className="text-3xl text-center">Admin Dash board</h1>
-      <section className="flex justify-between border-2">
-        <section className="border-2 flex-1">
-          Aside(Links to other Admin functionality)
-          <ul>
+    <main className="min-h-screen bg-gray-100 p-6">
+      
+      {/* Header */}
+      <h1 className="text-3xl font-bold text-center mb-8">
+        Admin Dashboard
+      </h1>
+
+      {/* Layout */}
+      <section className="flex flex-col md:flex-row gap-6">
+        
+        {/* Sidebar */}
+        <aside className="md:w-1/4 bg-white shadow-lg rounded-xl p-6">
+          <h2 className="text-xl font-semibold mb-4">Admin Panel</h2>
+
+          <ul className="space-y-4">
             <li>
-              <button>Order history</button>
+              <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-200 transition">
+                Order History
+              </button>
             </li>
+
             <li>
-              <button>Set order status</button>
+              <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-200 transition">
+                Add Product
+              </button>
             </li>
           </ul>
-        </section>
-        <section className="border-2 flex-2">
+        </aside>
+
+        {/* Main Content */}
+        <section className="md:w-3/4 bg-white shadow-lg rounded-xl p-6">
           <ProductAdmin />
         </section>
+
       </section>
     </main>
   );

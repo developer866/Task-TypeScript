@@ -1,5 +1,4 @@
-import { useState, useEffect} from "react";
-
+import { useState, useEffect } from "react";
 
 interface Collection {
   title: string;
@@ -101,7 +100,9 @@ function Homepage() {
     },
   ];
 
-  const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleNewsletterSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+  ): void => {
     e.preventDefault();
     alert(`Thanks for subscribing: ${email}`);
     setEmail("");
@@ -224,42 +225,44 @@ function Homepage() {
       {/* Why Choose Us */}
       <section className="py-20 bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
           <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold text-white mb-4">
+            <h2 className="text-5xl font-bold text-white mb-4 tracking-wide">
               Why Choose Us
             </h2>
-            <div className="w-24 h-1 bg-linear-to-r from-yellow-400 to-green-500 mx-auto"></div>
+            <div className="w-24 h-[2px] bg-white mx-auto"></div>
           </div>
 
+          {/* Features Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature: Feature, index: number) => (
               <div
                 key={index}
-                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 group"
+                className="bg-white/5 border border-white/20 rounded-2xl p-8 
+                     hover:bg-white hover:text-black 
+                     transition-all duration-300 group"
               >
-                <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                {/* Icon */}
+                <div className="text-6xl mb-4 transition-transform duration-300 group-hover:scale-110">
                   {feature.icon}
                 </div>
-                <h3
-                  className={`text-2xl font-bold mb-3 ${
-                    feature.color === "yellow"
-                      ? "text-yellow-400"
-                      : feature.color === "green"
-                        ? "text-green-500"
-                        : "text-white"
-                  }`}
-                >
+
+                {/* Title */}
+                <h3 className="text-2xl font-bold mb-3 text-white group-hover:text-black">
                   {feature.title}
                 </h3>
-                <p className="text-gray-400">{feature.description}</p>
+
+                {/* Description */}
+                <p className="text-gray-400 group-hover:text-gray-700">
+                  {feature.description}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
-
       {/* Testimonials */}
-      <section className="py-20 bg-linear-to-br from-yellow-400 via-green-500 to-yellow-400">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-5xl font-bold text-black mb-4">

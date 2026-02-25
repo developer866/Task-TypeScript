@@ -41,8 +41,8 @@ router.get("/track/:orderId", trackOrder);         // ✅ Public - no auth neede
 router.get("/my-orders", auth, getUserOrders);     // ✅ Added auth middleware
 
 // ========== ADMIN ROUTES ==========
-router.get("/admin/all",  getAllOrders);                    // ✅ Added auth + admin
-router.put("/admin/:orderId/tracking",  updateOrderTracking); // ✅ Added auth + admin
+router.get("/admin/all", auth, getAllOrders);                    // ✅ Added auth + admin
+router.put("/admin/:orderId/tracking",auth,  updateOrderTracking); // ✅ Added auth + admin
 router.put("/admin/:orderId/payment",  updatePaymentStatus);  // ✅ Added auth + admin
 
 module.exports = router;

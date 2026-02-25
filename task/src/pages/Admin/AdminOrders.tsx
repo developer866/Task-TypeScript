@@ -6,7 +6,9 @@ import { toast } from "react-toastify";
 interface Order {
   _id: string;
   orderId: string;
-  user: { name: string; email: string };
+  user?: { name: string; email: string }; // ✅ Make user optional
+  guestInfo?: { name: string; email: string; phone: string }; // ✅ Add guestInfo
+  isGuest: boolean; // ✅ Add isGuest flag
   items: unknown[];
   totalAmount: number;
   paymentMethod: string;
@@ -26,7 +28,7 @@ function AdminOrders() {
 
   useEffect(() => {
     fetchOrders();
-  }, [filter]);
+  }, [filter]); // ✅ Re-fetch when filter changes
 
   const fetchOrders = async () => {
     try {
@@ -50,8 +52,9 @@ function AdminOrders() {
 
       setOrders(data.orders);
     } catch (error: unknown) {
-      if (error instanceof Error)
+      if (error instanceof Error) {
         toast.error(error.message || "Failed to fetch orders");
+      }
     } finally {
       setLoading(false);
     }
@@ -76,7 +79,7 @@ function AdminOrders() {
             status: newStatus,
             description: statusDescription || undefined,
           }),
-        },
+        }
       );
 
       const data = await response.json();
@@ -91,8 +94,9 @@ function AdminOrders() {
       setStatusDescription("");
       fetchOrders();
     } catch (error: unknown) {
-      if (error instanceof Error)
+      if (error instanceof Error) {
         toast.error(error.message || "Failed to update order");
+      }
     }
   };
 
@@ -141,7 +145,7 @@ function AdminOrders() {
           </select>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white rounded-lg shadow-md overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -174,14 +178,33 @@ function AdminOrders() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     {order.orderId}
                   </td>
+                  
+                  {/* ✅ FIXED: Handle both guest and registered users */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <div>
-                      <p className="font-medium">{order.user.name}</p>
-                      <p className="text-gray-500 text-xs">
-                        {order.user.email}
-                      </p>
+                      {order.isGuest && order.guestInfo ? (
+                        <>
+                          <p className="font-medium">{order.guestInfo.name}</p>
+                          <p className="text-gray-500 text-xs">{order.guestInfo.email}</p>
+                          <p className="text-gray-500 text-xs">{order.guestInfo.phone}</p>
+                          <span className="inline-block mt-1 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs rounded-full">
+                            Guest
+                          </span>
+                        </>
+                      ) : order.user ? (
+                        <>
+                          <p className="font-medium">{order.user.name}</p>
+                          <p className="text-gray-500 text-xs">{order.user.email}</p>
+                          <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full">
+                            Member
+                          </span>
+                        </>
+                      ) : (
+                        <p className="text-gray-500 text-xs">N/A</p>
+                      )}
                     </div>
                   </td>
+
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     ${order.totalAmount.toFixed(2)}
                   </td>
@@ -191,8 +214,8 @@ function AdminOrders() {
                         order.paymentStatus === "completed"
                           ? "text-green-600"
                           : order.paymentStatus === "pending"
-                            ? "text-yellow-600"
-                            : "text-red-600"
+                          ? "text-yellow-600"
+                          : "text-red-600"
                       }`}
                     >
                       {order.paymentStatus}
@@ -200,7 +223,9 @@ function AdminOrders() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
-                      className={`px-2 py-1 text-xs rounded-full capitalize ${getStatusColor(order.orderStatus)}`}
+                      className={`px-2 py-1 text-xs rounded-full capitalize ${getStatusColor(
+                        order.orderStatus
+                      )}`}
                     >
                       {order.orderStatus}
                     </span>
@@ -225,9 +250,34 @@ function AdminOrders() {
           </table>
         </div>
 
+        {/* Empty State */}
+        {orders.length === 0 && (
+          <div className="bg-white rounded-lg shadow-md p-12 text-center">
+            <svg
+              className="w-16 h-16 text-gray-300 mx-auto mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No orders found</h3>
+            <p className="text-gray-600">
+              {filter === "all" 
+                ? "No orders have been placed yet."
+                : `No orders with status "${filter}".`}
+            </p>
+          </div>
+        )}
+
         {/* Update Modal */}
         {selectedOrder && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
               <h3 className="text-xl font-bold mb-4">Update Order Status</h3>
 
@@ -265,7 +315,7 @@ function AdminOrders() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => handleUpdateTracking(selectedOrder)}
-                    className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     Update
                   </button>
@@ -275,7 +325,7 @@ function AdminOrders() {
                       setNewStatus("");
                       setStatusDescription("");
                     }}
-                    className="flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+                    className="flex-1 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
                   >
                     Cancel
                   </button>

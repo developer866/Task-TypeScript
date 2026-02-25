@@ -1,10 +1,10 @@
+// src/components/Navbar.tsx
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../app/store";
 import { logout } from "../features/auth/authSlice";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-
 import { useAppSelector } from "../app/hooks";
 
 function Navbar() {
@@ -28,6 +28,7 @@ function Navbar() {
     <nav className="bg-white shadow-md sticky top-0 z-50 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
+          
           {/* Logo Section */}
           <div className="shrink-0">
             <NavLink to="/" onClick={closeMobileMenu}>
@@ -63,8 +64,25 @@ function Navbar() {
             >
               Shop
             </NavLink>
+            
+            {/* ✅ Show Orders link only when logged in */}
+            {token && (
+              <NavLink
+                to="/order-history"
+                className={({ isActive }) =>
+                  `text-sm lg:text-base font-medium transition-colors duration-200 hover:text-blue-600 ${
+                    isActive
+                      ? "text-blue-600 border-b-2 border-blue-600 pb-1"
+                      : "text-gray-700"
+                  }`
+                }
+              >
+                Orders
+              </NavLink>
+            )}
+
             <NavLink
-              to="/Project"
+              to="/track-order"
               className={({ isActive }) =>
                 `text-sm lg:text-base font-medium transition-colors duration-200 hover:text-blue-600 ${
                   isActive
@@ -73,24 +91,13 @@ function Navbar() {
                 }`
               }
             >
-              Collection
-            </NavLink>
-            <NavLink
-              to="/taskpage"
-              className={({ isActive }) =>
-                `text-sm lg:text-base font-medium transition-colors duration-200 hover:text-blue-600 ${
-                  isActive
-                    ? "text-blue-600 border-b-2 border-blue-600 pb-1"
-                    : "text-gray-700"
-                }`
-              }
-            >
-              Support
+              Track Order
             </NavLink>
           </div>
 
           {/* Right Side: Cart + Auth Buttons (Desktop & Mobile) */}
           <div className="flex items-center gap-2 sm:gap-3">
+            
             {/* 🛒 Cart Icon - Always Visible */}
             <NavLink
               to="/cart"
@@ -151,7 +158,6 @@ function Navbar() {
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? (
-                // Close Icon
                 <svg
                   className="w-6 h-6 text-gray-700"
                   fill="none"
@@ -166,7 +172,6 @@ function Navbar() {
                   />
                 </svg>
               ) : (
-                // Hamburger Icon
                 <svg
                   className="w-6 h-6 text-gray-700"
                   fill="none"
@@ -189,6 +194,7 @@ function Navbar() {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 py-4">
             <div className="flex flex-col space-y-3">
+              
               {/* Mobile Navigation Links */}
               <NavLink
                 to="/"
@@ -203,6 +209,7 @@ function Navbar() {
               >
                 Home
               </NavLink>
+              
               <NavLink
                 to="/Product"
                 onClick={closeMobileMenu}
@@ -216,8 +223,26 @@ function Navbar() {
               >
                 Shop
               </NavLink>
+
+              {/* ✅ Show Orders link only when logged in (Mobile) */}
+              {token && (
+                <NavLink
+                  to="/order-history"
+                  onClick={closeMobileMenu}
+                  className={({ isActive }) =>
+                    `px-4 py-2 text-base font-medium rounded-lg transition-colors ${
+                      isActive
+                        ? "bg-blue-50 text-blue-600"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`
+                  }
+                >
+                  📦 My Orders
+                </NavLink>
+              )}
+
               <NavLink
-                to="/Project"
+                to="/track-order"
                 onClick={closeMobileMenu}
                 className={({ isActive }) =>
                   `px-4 py-2 text-base font-medium rounded-lg transition-colors ${
@@ -227,20 +252,7 @@ function Navbar() {
                   }`
                 }
               >
-                Collection
-              </NavLink>
-              <NavLink
-                to="/taskpage"
-                onClick={closeMobileMenu}
-                className={({ isActive }) =>
-                  `px-4 py-2 text-base font-medium rounded-lg transition-colors ${
-                    isActive
-                      ? "bg-blue-50 text-blue-600"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`
-                }
-              >
-                Support
+                🔍 Track Order
               </NavLink>
 
               {/* Mobile Auth Buttons */}
