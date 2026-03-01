@@ -32,7 +32,7 @@ function Login() {
           token: data.token,
         }),
       );
-      navigate("/taskpage");
+      navigate("/admin");
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast(error.message);
