@@ -1,7 +1,9 @@
 // src/pages/NotFound.tsx
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function NotFound() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="max-w-md text-center">
@@ -12,12 +14,19 @@ function NotFound() {
         <p className="text-gray-600 mb-8">
           Sorry, we couldn't find the page you're looking for.
         </p>
-        <Link
-          to="/"
+
+        <button
+          onClick={() => {
+            if (window.history.length > 1) {
+              navigate(-1);
+            } else {
+              navigate("/");
+            }
+          }}
           className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
         >
-          Go back home
-        </Link>
+          Go back
+        </button>
       </div>
     </div>
   );
