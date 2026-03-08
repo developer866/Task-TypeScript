@@ -1,14 +1,54 @@
 // src/pages/PaymentVerification.tsx
+
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
+interface TrackingDetail {
+  status: string;
+  description: string;
+  timestamp: string;
+}
+
+interface Order {
+  orderId: string;
+  items: any[];
+  totalAmount: number;
+  paymentMethod: string;
+  paymentStatus: string;
+  orderStatus: string;
+  trackingDetails: TrackingDetail[];
+  createdAt: string;
+}
+
 function PaymentVerification() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [status, setStatus] = useState<"verifying" | "success" | "failed">(
+    "verifying",
+  );
+  const [orderId, setOrderId] = useState<string | null>(null);
+
+  function PaymentVerification() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState<"verifying" | "success" | "failed">("verifying");
   const [orderId, setOrderId] = useState<string | null>(null);
 
+  // ✅ FIXED: Define function FIRST
+  const verifyPayment = async (reference: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/orders/verify-payment/${reference}`
+      );
+      // ... rest of code
+    } catch (error) {
+      setStatus("failed");
+      toast.error("Failed to verify payment");
+    }
+  };
+
+  // ✅ Then use it in useEffect
   useEffect(() => {
     const reference = searchParams.get("reference");
     
@@ -21,10 +61,26 @@ function PaymentVerification() {
     verifyPayment(reference);
   }, [searchParams]);
 
-  const verifyPayment = async (reference: string) => {
+  // ... rest of component
+}
+
+  useEffect(() => {
+    const reference = searchParams.get("reference");
+
+    if (!reference) {
+      toast.error("Invalid payment reference");
+      navigate("/");
+      return;
+    }
+
+    verifyPayment(reference); // ✅ Now this can be called before declaration
+  }, [searchParams, navigate]); // ✅ Add dependencies
+
+  // ✅ FIXED: Changed from const to function declaration
+  async function verifyPayment(reference: string) {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/orders/verify-payment/${reference}`
+        `http://localhost:5000/api/orders/verify-payment/${reference}`,
       );
 
       const data = await response.json();
@@ -33,7 +89,7 @@ function PaymentVerification() {
         setStatus("success");
         setOrderId(data.order.orderId);
         toast.success("Payment verified successfully!");
-        
+
         // Redirect to order tracking after 3 seconds
         setTimeout(() => {
           navigate(`/track-order/${data.order.orderId}`);
@@ -42,11 +98,14 @@ function PaymentVerification() {
         setStatus("failed");
         toast.error("Payment verification failed");
       }
-    } catch (error) {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`Error verifying payment: ${error.message}`);
+      }
       setStatus("failed");
       toast.error("Failed to verify payment");
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
