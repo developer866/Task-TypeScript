@@ -27,8 +27,10 @@ function Checkout() {
   const token = useAppSelector((state) => state.auth.token);
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<"online" | "cash_on_delivery">("online");
-  
+  const [paymentMethod, setPaymentMethod] = useState<
+    "online" | "cash_on_delivery"
+  >("online");
+
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     street: "",
     city: "",
@@ -59,6 +61,82 @@ function Checkout() {
     });
   };
 
+  // const handlePlaceOrder = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   if (items.length === 0) {
+  //     toast.error("Your cart is empty!");
+  //     return;
+  //   }
+
+  //   // ✅ Validate guest info if not logged in
+  //   if (!token && (!guestInfo.name || !guestInfo.email || !guestInfo.phone)) {
+  //     toast.error("Please fill in your contact information");
+  //     return;
+  //   }
+
+  //   setIsProcessing(true);
+
+  //   try {
+  //     const orderItems = items.map((item) => ({
+  //       productId: item._id,
+  //       name: item.name,
+  //       quantity: item.quantity,
+  //     }));
+
+  //     // ✅ Prepare request body
+  //     const requestBody: {
+  //       items: typeof orderItems;
+  //       shippingAddress: ShippingAddress;
+  //       paymentMethod: string;
+  //       guestInfo?: GuestInfo;
+  //     } = {
+  //       items: orderItems,
+  //       shippingAddress,
+  //       paymentMethod,
+  //     };
+
+  //     // ✅ Add guestInfo if not logged in
+  //     if (!token) {
+  //       requestBody.guestInfo = guestInfo;
+  //     }
+
+  //     // ✅ Prepare headers
+  //     const headers: Record<string, string> = {
+  //       "Content-Type": "application/json",
+  //     };
+
+  //     // ✅ Add token only if logged in
+  //     if (token) {
+  //       headers.Authorization = `Bearer ${token}`;
+  //     }
+
+  //     const response = await fetch("http://localhost:5000/api/orders", {
+  //       method: "POST",
+  //       headers,
+  //       body: JSON.stringify(requestBody),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error(data.message || "Failed to place order");
+  //     }
+
+  //     dispatch(clearCart());
+  //     toast.success("Order placed successfully!");
+  //     navigate(`/track-order/${data.orderId}`);
+  //   } catch (error: unknown) {
+  //     if (error instanceof Error) {
+  //       toast.error(error.message || "Failed to place order");
+  //     }
+  //   } finally {
+  //     setIsProcessing(false);
+  //   }
+  // };
+
+  // src/pages/Checkout.tsx - Update handlePlaceOrder function
+
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -67,7 +145,6 @@ function Checkout() {
       return;
     }
 
-    // ✅ Validate guest info if not logged in
     if (!token && (!guestInfo.name || !guestInfo.email || !guestInfo.phone)) {
       toast.error("Please fill in your contact information");
       return;
@@ -82,29 +159,17 @@ function Checkout() {
         quantity: item.quantity,
       }));
 
-      // ✅ Prepare request body
-      const requestBody: {
-        items: typeof orderItems;
-        shippingAddress: ShippingAddress;
-        paymentMethod: string;
-        guestInfo?: GuestInfo;
-      } = {
+      const requestBody = {
         items: orderItems,
         shippingAddress,
         paymentMethod,
+        ...(!token && { guestInfo }),
       };
 
-      // ✅ Add guestInfo if not logged in
-      if (!token) {
-        requestBody.guestInfo = guestInfo;
-      }
-
-      // ✅ Prepare headers
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
       };
 
-      // ✅ Add token only if logged in
       if (token) {
         headers.Authorization = `Bearer ${token}`;
       }
@@ -123,10 +188,18 @@ function Checkout() {
 
       dispatch(clearCart());
       toast.success("Order placed successfully!");
-      navigate(`/track-order/${data.orderId}`);
+
+      // ✅ If online payment, redirect to Paystack
+      if (paymentMethod === "online" && data.payment?.authorizationUrl) {
+        // Redirect to Paystack payment page
+        window.location.href = data.payment.authorizationUrl;
+      } else {
+        // For cash on delivery, go to tracking page
+        navigate(`/track-order/${data.orderId}`);
+      }
     } catch (error: unknown) {
       if (error instanceof Error) {
-        toast.error(error.message || "Failed to place order");
+        toast.error(error.message);
       }
     } finally {
       setIsProcessing(false);
@@ -157,7 +230,6 @@ function Checkout() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Checkout Form */}
           <div className="space-y-6">
-            
             {/* ✅ Guest Contact Info (only show if not logged in) */}
             {!token && (
               <div className="bg-white rounded-lg shadow-md p-6">
@@ -213,7 +285,8 @@ function Checkout() {
             {token && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm text-blue-800">
-                  ✓ <strong>You're logged in</strong> - Your order will be saved to your account
+                  ✓ <strong>You're logged in</strong> - Your order will be saved
+                  to your account
                 </p>
               </div>
             )}
@@ -300,15 +373,21 @@ function Checkout() {
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-bold mb-4">Payment Method</h2>
               <div className="space-y-3">
-                <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
-                  paymentMethod === "online" ? "border-blue-600 bg-blue-50" : ""
-                }`}>
+                <label
+                  className={`flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
+                    paymentMethod === "online"
+                      ? "border-blue-600 bg-blue-50"
+                      : ""
+                  }`}
+                >
                   <input
                     type="radio"
                     name="paymentMethod"
                     value="online"
                     checked={paymentMethod === "online"}
-                    onChange={(e) => setPaymentMethod(e.target.value as "online")}
+                    onChange={(e) =>
+                      setPaymentMethod(e.target.value as "online")
+                    }
                     className="w-5 h-5 text-blue-600"
                   />
                   <div className="ml-3">
@@ -319,15 +398,21 @@ function Checkout() {
                   </div>
                 </label>
 
-                <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
-                  paymentMethod === "cash_on_delivery" ? "border-blue-600 bg-blue-50" : ""
-                }`}>
+                <label
+                  className={`flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
+                    paymentMethod === "cash_on_delivery"
+                      ? "border-blue-600 bg-blue-50"
+                      : ""
+                  }`}
+                >
                   <input
                     type="radio"
                     name="paymentMethod"
                     value="cash_on_delivery"
                     checked={paymentMethod === "cash_on_delivery"}
-                    onChange={(e) => setPaymentMethod(e.target.value as "cash_on_delivery")}
+                    onChange={(e) =>
+                      setPaymentMethod(e.target.value as "cash_on_delivery")
+                    }
                     className="w-5 h-5 text-blue-600"
                   />
                   <div className="ml-3">

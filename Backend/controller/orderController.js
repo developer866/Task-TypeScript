@@ -2,33 +2,34 @@
 const Order = require("../models/order");
 const Product = require("../models/product");
 const mongoose = require("mongoose");
+const paystackService = require("../services/payment");
 
-// ✅ Place Order (Guest or Logged-in User)
+// ✅ Place Order with Paystack Integration
 const placeOrder = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
     const { items, shippingAddress, paymentMethod, guestInfo } = req.body;
-    
-    // ✅ FIXED: Safely get userId (might be undefined for guests)
+
     const userId = req.user?.id || null;
     const isGuest = !userId;
 
-    console.log("User ID:", userId);
-    console.log("Is Guest:", isGuest);
-
-    // ✅ Validate guest info if not logged in
+    // Validate guest info
     if (isGuest) {
-      if (!guestInfo || !guestInfo.name || !guestInfo.email || !guestInfo.phone) {
+      if (
+        !guestInfo ||
+        !guestInfo.name ||
+        !guestInfo.email ||
+        !guestInfo.phone
+      ) {
         await session.abortTransaction();
-        return res.status(400).json({ 
-          message: "Guest information (name, email, phone) is required" 
+        return res.status(400).json({
+          message: "Guest information (name, email, phone) is required",
         });
       }
     }
 
-    // Validate items
     if (!items || items.length === 0) {
       await session.abortTransaction();
       return res.status(400).json({ message: "Cart is empty" });
@@ -48,29 +49,29 @@ const placeOrder = async (req, res) => {
 
       if (!product) {
         await session.abortTransaction();
-        return res.status(404).json({ 
-          message: `Product ${item.name} not found` 
+        return res.status(404).json({
+          message: `Product ${item.name} not found`,
         });
       }
 
       const isAvailable = product.available ?? product.avaliable ?? false;
       if (!isAvailable) {
         await session.abortTransaction();
-        return res.status(400).json({ 
-          message: `Product ${product.name} is not available` 
+        return res.status(400).json({
+          message: `Product ${product.name} is not available`,
         });
       }
 
       if (product.stock < item.quantity) {
         await session.abortTransaction();
-        return res.status(400).json({ 
-          message: `Insufficient stock for ${product.name}. Only ${product.stock} available` 
+        return res.status(400).json({
+          message: `Insufficient stock for ${product.name}. Only ${product.stock} available`,
         });
       }
 
       // Decrease stock
       product.stock -= item.quantity;
-      
+
       if (product.stock === 0) {
         product.available = false;
         if (product.avaliable !== undefined) {
@@ -90,30 +91,75 @@ const placeOrder = async (req, res) => {
       totalAmount += product.price * item.quantity;
     }
 
-    const paymentStatus = paymentMethod === "online" ? "completed" : "pending";
+    // Generate order ID
+    const timestamp = Date.now().toString(36).toUpperCase();
+    const random = Math.random().toString(36).substr(2, 5).toUpperCase();
+    const orderId = `ORD-${timestamp}-${random}`;
 
-    // ✅ Create order with guest or user info
+    // ✅ Determine payment status
+    let paymentStatus = "pending";
+    let paystackReference = null;
+    let paystackAccessCode = null;
+    let paystackAuthorizationUrl = null;
+
+    // ✅ Initialize Paystack payment for online payment
+    if (paymentMethod === "online") {
+      const customerEmail = isGuest ? guestInfo.email : req.user.email;
+
+      const paymentInit = await paystackService.initializePayment(
+        customerEmail,
+        totalAmount,
+        orderId,
+        {
+          customer_name: isGuest ? guestInfo.name : req.user.name,
+          items: orderItems.map((item) => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+        },
+      );
+
+      if (!paymentInit.success) {
+        await session.abortTransaction();
+        return res.status(400).json({
+          message: "Payment initialization failed. Please try again.",
+        });
+      }
+
+      paystackReference = paymentInit.data.reference;
+      paystackAccessCode = paymentInit.data.access_code;
+      paystackAuthorizationUrl = paymentInit.data.authorization_url;
+    }
+
+    const trackingMessage =
+      paymentMethod === "online"
+        ? "Order placed - Awaiting payment confirmation"
+        : "Order placed - Cash on delivery";
+
     const orderData = {
+      orderId,
       items: orderItems,
       totalAmount,
       shippingAddress,
       paymentMethod,
       paymentStatus,
       isGuest,
+      paystackReference,
+      paystackAccessCode,
+      paystackAuthorizationUrl,
       trackingDetails: [
         {
           status: "pending",
-          description: "Order placed successfully",
+          description: trackingMessage,
         },
       ],
     };
 
-    // ✅ Add user ID only if logged in
     if (userId) {
       orderData.user = userId;
     }
 
-    // ✅ Add guest info only if guest
     if (isGuest) {
       orderData.guestInfo = guestInfo;
     }
@@ -122,18 +168,106 @@ const placeOrder = async (req, res) => {
 
     await session.commitTransaction();
 
+    // ✅ Return response with payment URL if online payment
     res.status(201).json({
       success: true,
       message: "Order placed successfully",
       orderId: order[0].orderId,
       order: order[0],
+      // ✅ Include payment URL for frontend redirect
+      ...(paymentMethod === "online" && {
+        payment: {
+          authorizationUrl: paystackAuthorizationUrl,
+          accessCode: paystackAccessCode,
+          reference: paystackReference,
+        },
+      }),
     });
   } catch (error) {
     await session.abortTransaction();
-    console.error("Order placement error:", error);
     res.status(500).json({ message: error.message });
   } finally {
     session.endSession();
+  }
+};
+
+// ✅ Verify Paystack Payment
+const verifyPayment = async (req, res) => {
+  try {
+    const { reference } = req.params;
+
+    // Find order by reference
+    const order = await Order.findOne({ paystackReference: reference });
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Check if already verified
+    if (order.paymentStatus === "completed") {
+      return res.status(200).json({
+        success: true,
+        message: "Payment already verified",
+        order,
+      });
+    }
+
+    // Verify with Paystack
+    const verification = await paystackService.verifyPayment(reference);
+
+    if (!verification.success) {
+      return res.status(400).json({
+        message: "Payment verification failed",
+      });
+    }
+
+    const { status, amount } = verification.data;
+
+    // Check if payment was successful
+    if (status === "success") {
+      // Verify amount matches
+      const expectedAmount = Math.round(order.totalAmount * 100); // Convert to kobo
+      if (amount !== expectedAmount) {
+        return res.status(400).json({
+          message: "Payment amount mismatch",
+        });
+      }
+
+      // Update order
+      order.paymentStatus = "completed";
+      order.orderStatus = "confirmed";
+      order.trackingDetails.push({
+        status: "confirmed",
+        description: "Payment received successfully",
+      });
+
+      await order.save();
+
+    
+      res.status(200).json({
+        success: true,
+        message: "Payment verified successfully",
+        order,
+      });
+    } else {
+      // Payment failed
+      order.paymentStatus = "failed";
+      order.trackingDetails.push({
+        status: "pending",
+        description: "Payment verification failed",
+      });
+
+      await order.save();
+
+
+      res.status(400).json({
+        success: false,
+        message: "Payment was not successful",
+        order,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -239,7 +373,13 @@ const updateOrderTracking = async (req, res) => {
     const { status, description } = req.body;
     const adminId = req.user.id;
 
-    const validStatuses = ["pending", "confirmed", "processing", "shipped", "delivered"];
+    const validStatuses = [
+      "pending",
+      "confirmed",
+      "processing",
+      "shipped",
+      "delivered",
+    ];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ message: "Invalid status" });
     }
@@ -292,7 +432,7 @@ const updatePaymentStatus = async (req, res) => {
     }
 
     order.paymentStatus = paymentStatus;
-    
+
     order.trackingDetails.push({
       status: order.orderStatus,
       description: `Payment status updated to ${paymentStatus}`,
@@ -314,6 +454,7 @@ const updatePaymentStatus = async (req, res) => {
 module.exports = {
   placeOrder,
   getUserOrders,
+  verifyPayment,
   trackOrder,
   getAllOrders,
   updateOrderTracking,

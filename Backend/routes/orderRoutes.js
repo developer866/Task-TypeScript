@@ -3,18 +3,17 @@ const express = require("express");
 const router = express.Router();
 const {
   placeOrder,
+  verifyPayment, // ✅ Import
   getUserOrders,
   trackOrder,
   getAllOrders,
   updateOrderTracking,
   updatePaymentStatus,
-} = require("../controller/orderController"); // ✅ Fixed path (controllers not controller)
+} = require("../controller/orderController");
 
-// ✅ Import middleware
 const auth = require("../middleware/auth");
 // const admin = require("../middleware/admin");
 
-// ✅ Create optionalAuth middleware inline
 const jwt = require("jsonwebtoken");
 const optionalAuth = (req, res, next) => {
   try {
@@ -34,15 +33,16 @@ const optionalAuth = (req, res, next) => {
 };
 
 // ========== PUBLIC/GUEST ROUTES ==========
-router.post("/", optionalAuth, placeOrder);        // ✅ Changed from "/orders" to "/"
-router.get("/track/:orderId", trackOrder);         // ✅ Public - no auth needed
+router.post("/", optionalAuth, placeOrder);
+router.get("/track/:orderId", trackOrder);
+router.get("/verify-payment/:reference", verifyPayment); // ✅ Add this
 
 // ========== USER ROUTES (Auth Required) ==========
-router.get("/my-orders", auth, getUserOrders);     // ✅ Added auth middleware
+router.get("/my-orders", auth, getUserOrders);
 
 // ========== ADMIN ROUTES ==========
-router.get("/admin/all", auth, getAllOrders);                    // ✅ Added auth + admin
-router.put("/admin/:orderId/tracking",auth,  updateOrderTracking); // ✅ Added auth + admin
-router.put("/admin/:orderId/payment",  updatePaymentStatus);  // ✅ Added auth + admin
+router.get("/admin/all", auth, getAllOrders);
+router.put("/admin/:orderId/tracking", auth, updateOrderTracking);
+router.put("/admin/:orderId/payment", auth, updatePaymentStatus);
 
 module.exports = router;

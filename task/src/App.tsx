@@ -11,7 +11,7 @@ import Shop from "./pages/ProductClients";
 import Homepage from "./pages/Homepage";
 import Footer from "./components/Footer";
 import Cart from "./pages/Cart";
-
+import PaymentVerification from "./pages/PaymentVerification";
 import Checkout from "./pages/Checkout";
 import TrackOrder from "./pages/TrackOrder";
 import MyOrders from "./pages/MyOrder";
@@ -46,6 +46,7 @@ function App() {
         <Route path="/admin/orders" element={<AdminOrders />} />
         <Route path="/admin/products" element={<ProductAdmin />} />
         <Route path="/order-history" element={<OrderHistory />} />
+        <Route path="/payment/verify" element={<PaymentVerification />} />
 
          <Route path="*" element={<NotFound />} />
       </Routes>
