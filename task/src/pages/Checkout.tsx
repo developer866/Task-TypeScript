@@ -13,7 +13,6 @@ interface ShippingAddress {
   country: string;
 }
 
-// ✅ Add GuestInfo interface
 interface GuestInfo {
   name: string;
   email: string;
@@ -39,7 +38,6 @@ function Checkout() {
     country: "",
   });
 
-  // ✅ Add guest info state
   const [guestInfo, setGuestInfo] = useState<GuestInfo>({
     name: "",
     email: "",
@@ -47,95 +45,12 @@ function Checkout() {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShippingAddress({
-      ...shippingAddress,
-      [e.target.name]: e.target.value,
-    });
+    setShippingAddress({ ...shippingAddress, [e.target.name]: e.target.value });
   };
 
-  // ✅ Add guest info handler
   const handleGuestChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGuestInfo({
-      ...guestInfo,
-      [e.target.name]: e.target.value,
-    });
+    setGuestInfo({ ...guestInfo, [e.target.name]: e.target.value });
   };
-
-  // const handlePlaceOrder = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   if (items.length === 0) {
-  //     toast.error("Your cart is empty!");
-  //     return;
-  //   }
-
-  //   // ✅ Validate guest info if not logged in
-  //   if (!token && (!guestInfo.name || !guestInfo.email || !guestInfo.phone)) {
-  //     toast.error("Please fill in your contact information");
-  //     return;
-  //   }
-
-  //   setIsProcessing(true);
-
-  //   try {
-  //     const orderItems = items.map((item) => ({
-  //       productId: item._id,
-  //       name: item.name,
-  //       quantity: item.quantity,
-  //     }));
-
-  //     // ✅ Prepare request body
-  //     const requestBody: {
-  //       items: typeof orderItems;
-  //       shippingAddress: ShippingAddress;
-  //       paymentMethod: string;
-  //       guestInfo?: GuestInfo;
-  //     } = {
-  //       items: orderItems,
-  //       shippingAddress,
-  //       paymentMethod,
-  //     };
-
-  //     // ✅ Add guestInfo if not logged in
-  //     if (!token) {
-  //       requestBody.guestInfo = guestInfo;
-  //     }
-
-  //     // ✅ Prepare headers
-  //     const headers: Record<string, string> = {
-  //       "Content-Type": "application/json",
-  //     };
-
-  //     // ✅ Add token only if logged in
-  //     if (token) {
-  //       headers.Authorization = `Bearer ${token}`;
-  //     }
-
-  //     const response = await fetch("http://localhost:5000/api/orders", {
-  //       method: "POST",
-  //       headers,
-  //       body: JSON.stringify(requestBody),
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       throw new Error(data.message || "Failed to place order");
-  //     }
-
-  //     dispatch(clearCart());
-  //     toast.success("Order placed successfully!");
-  //     navigate(`/track-order/${data.orderId}`);
-  //   } catch (error: unknown) {
-  //     if (error instanceof Error) {
-  //       toast.error(error.message || "Failed to place order");
-  //     }
-  //   } finally {
-  //     setIsProcessing(false);
-  //   }
-  // };
-
-  // src/pages/Checkout.tsx - Update handlePlaceOrder function
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,26 +101,33 @@ function Checkout() {
         throw new Error(data.message || "Failed to place order");
       }
 
+      const redirectUrl: string | undefined = data.payment?.authorizationUrl;
+      const orderId: string = data.orderId;
+
+      // Clear cart and show success toast
       dispatch(clearCart());
       toast.success("Order placed successfully!");
 
-      // ✅ If online payment, redirect to Paystack
-      if (paymentMethod === "online" && data.payment?.authorizationUrl) {
-        // Redirect to Paystack payment page
-        window.location.href = data.payment.authorizationUrl;
+      // ✅ For Paystack (online), use window.location so React Router
+      // doesn't try to handle an external URL. For COD, use navigate()
+      // which is safe because we captured orderId before the re-render.
+      if (paymentMethod === "online" && redirectUrl) {
+        window.location.href = redirectUrl;
       } else {
-        // For cash on delivery, go to tracking page
-        navigate(`/track-order/${data.orderId}`);
+        navigate(`/track-order/${orderId}`);
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
-        toast.error(error.message);
+        toast.error(error.message || "Failed to place order");
+      } else {
+        toast.error("Something went wrong. Please try again.");
       }
     } finally {
       setIsProcessing(false);
     }
   };
 
+  // Empty cart screen — kept here (not moved above hooks) so hooks always run
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -228,9 +150,10 @@ function Checkout() {
         <h1 className="text-3xl font-bold mb-8">Checkout</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Checkout Form */}
+          {/* ── Form Column ── */}
           <div className="space-y-6">
-            {/* ✅ Guest Contact Info (only show if not logged in) */}
+
+            {/* Guest contact info */}
             {!token && (
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-bold mb-4">Contact Information</h2>
@@ -281,12 +204,11 @@ function Checkout() {
               </div>
             )}
 
-            {/* ✅ Show logged-in user info */}
+            {/* Logged-in banner */}
             {token && (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm text-blue-800">
-                  ✓ <strong>You're logged in</strong> - Your order will be saved
-                  to your account
+                  ✓ <strong>You're logged in</strong> — Your order will be saved to your account
                 </p>
               </div>
             )}
@@ -308,7 +230,6 @@ function Checkout() {
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">
@@ -337,7 +258,6 @@ function Checkout() {
                     />
                   </div>
                 </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">
@@ -377,7 +297,7 @@ function Checkout() {
                   className={`flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
                     paymentMethod === "online"
                       ? "border-blue-600 bg-blue-50"
-                      : ""
+                      : "border-gray-200"
                   }`}
                 >
                   <input
@@ -385,16 +305,12 @@ function Checkout() {
                     name="paymentMethod"
                     value="online"
                     checked={paymentMethod === "online"}
-                    onChange={(e) =>
-                      setPaymentMethod(e.target.value as "online")
-                    }
+                    onChange={(e) => setPaymentMethod(e.target.value as "online")}
                     className="w-5 h-5 text-blue-600"
                   />
                   <div className="ml-3">
                     <p className="font-semibold">Pay Online</p>
-                    <p className="text-sm text-gray-600">
-                      Pay securely with your card
-                    </p>
+                    <p className="text-sm text-gray-600">Pay securely with your card via Paystack</p>
                   </div>
                 </label>
 
@@ -402,7 +318,7 @@ function Checkout() {
                   className={`flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
                     paymentMethod === "cash_on_delivery"
                       ? "border-blue-600 bg-blue-50"
-                      : ""
+                      : "border-gray-200"
                   }`}
                 >
                   <input
@@ -417,14 +333,13 @@ function Checkout() {
                   />
                   <div className="ml-3">
                     <p className="font-semibold">Cash on Delivery</p>
-                    <p className="text-sm text-gray-600">
-                      Pay when you receive your order
-                    </p>
+                    <p className="text-sm text-gray-600">Pay when you receive your order</p>
                   </div>
                 </label>
               </div>
             </div>
 
+            {/* Submit */}
             <button
               onClick={handlePlaceOrder}
               disabled={isProcessing}
@@ -433,7 +348,7 @@ function Checkout() {
               {isProcessing ? "Processing..." : "Place Order"}
             </button>
 
-            {/* ✅ Login suggestion for guests */}
+            {/* Login suggestion */}
             {!token && (
               <p className="text-center text-sm text-gray-600">
                 Have an account?{" "}
@@ -447,14 +362,14 @@ function Checkout() {
             )}
           </div>
 
-          {/* Order Summary */}
+          {/* ── Order Summary ── */}
           <div className="bg-white rounded-lg shadow-md p-6 h-fit sticky top-24">
             <h2 className="text-xl font-bold mb-4">Order Summary</h2>
             <div className="space-y-3 mb-4">
               {items.map((item) => (
                 <div key={item._id} className="flex justify-between text-sm">
                   <span className="text-gray-700">
-                    {item.name} x {item.quantity}
+                    {item.name} × {item.quantity}
                   </span>
                   <span className="font-medium">
                     ${(item.price * item.quantity).toFixed(2)}
