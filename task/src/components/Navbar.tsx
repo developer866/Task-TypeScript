@@ -33,7 +33,7 @@ function Navbar() {
           <div className="shrink-0">
             <NavLink to="/" onClick={closeMobileMenu}>
               <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-800 hover:text-blue-600 transition-colors cursor-pointer">
-                Clothing Store
+                Fuluxry
               </h1>
             </NavLink>
           </div>
@@ -63,6 +63,18 @@ function Navbar() {
               }
             >
               Shop
+            </NavLink>
+            <NavLink
+              to="/contact"
+              className={({ isActive }) =>
+                `text-sm lg:text-base font-medium transition-colors duration-200 hover:text-blue-600 ${
+                  isActive
+                    ? "text-blue-600 border-b-2 border-blue-600 pb-1"
+                    : "text-gray-700"
+                }`
+              }
+            >
+              Contact Us
             </NavLink>
             
             {/* ✅ Show Orders link only when logged in */}
@@ -222,6 +234,19 @@ function Navbar() {
                 }
               >
                 Shop
+              </NavLink>
+              <NavLink
+                to="/contact"
+                onClick={closeMobileMenu}
+                className={({ isActive }) =>
+                  `px-4 py-2 text-base font-medium rounded-lg transition-colors ${
+                    isActive
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`
+                }
+              >
+                Contact Us
               </NavLink>
 
               {/* ✅ Show Orders link only when logged in (Mobile) */}
