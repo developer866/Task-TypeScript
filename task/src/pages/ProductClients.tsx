@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { addToCart } from "../features/cart/cartSlice";
 
+
 interface ProductType {
   _id: string;
   name: string;
@@ -28,7 +29,7 @@ function Shop() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/product");
+      const response = await fetch("https://task-typescript.onrender.com/api/")
       if (!response.ok) throw new Error("Failed to fetch products");
       const data = await response.json();
       setProducts(data.products);
