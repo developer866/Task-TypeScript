@@ -212,7 +212,6 @@ function Homepage() {
                           ? "bg-green-500 text-white"
                           : "bg-white text-black"
                     }`}
-                    onClick={()=>navigate("/collection")}
                   >
                     Explore →
                   </button>
