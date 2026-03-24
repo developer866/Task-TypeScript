@@ -8,9 +8,9 @@ function Footer() {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-10 h-10 bg-linear-to-br from-yellow-400 to-green-500 rounded-full flex items-center justify-center">
-                <span className="text-black font-bold text-xl">V</span>
+                <span className="text-black font-bold text-xl">F</span>
               </div>
-              <span className="text-white text-2xl font-bold">VOGUE</span>
+              <span className="text-white text-2xl font-bold">FLUXURY</span>
             </div>
             <p className="text-gray-400 text-sm">
               Premium fashion for the modern individual. Elevate your style.

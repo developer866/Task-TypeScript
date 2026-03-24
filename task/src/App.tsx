@@ -19,6 +19,7 @@ import AdminOrders from "./pages/Admin/AdminOrders";
 import ProductAdmin from "./pages/Admin/ProductAdmin";
 import NotFound from "./pages/NotFound";
 import OrderHistory from "./pages/OrderHistory";
+import Collection from "./pages/Collection";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterUser />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/collection" element={<Collection/>} />
 
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/track-order/:orderId?" element={<TrackOrder />} />

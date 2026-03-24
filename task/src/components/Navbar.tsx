@@ -28,12 +28,11 @@ function Navbar() {
     <nav className="bg-white shadow-md sticky top-0 z-50 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
-          
           {/* Logo Section */}
           <div className="shrink-0">
             <NavLink to="/" onClick={closeMobileMenu}>
               <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-800 hover:text-blue-600 transition-colors cursor-pointer">
-                Fuluxry
+                FULUXRY
               </h1>
             </NavLink>
           </div>
@@ -64,19 +63,7 @@ function Navbar() {
             >
               Shop
             </NavLink>
-            <NavLink
-              to="/contact"
-              className={({ isActive }) =>
-                `text-sm lg:text-base font-medium transition-colors duration-200 hover:text-blue-600 ${
-                  isActive
-                    ? "text-blue-600 border-b-2 border-blue-600 pb-1"
-                    : "text-gray-700"
-                }`
-              }
-            >
-              Contact Us
-            </NavLink>
-            
+
             {/* ✅ Show Orders link only when logged in */}
             {token && (
               <NavLink
@@ -105,11 +92,22 @@ function Navbar() {
             >
               Track Order
             </NavLink>
+            <NavLink
+              to="/contact"
+              className={({ isActive }) =>
+                `text-sm lg:text-base font-medium transition-colors duration-200 hover:text-blue-600 ${
+                  isActive
+                    ? "text-blue-600 border-b-2 border-blue-600 pb-1"
+                    : "text-gray-700"
+                }`
+              }
+            >
+              Contact Us
+            </NavLink>
           </div>
 
           {/* Right Side: Cart + Auth Buttons (Desktop & Mobile) */}
           <div className="flex items-center gap-2 sm:gap-3">
-            
             {/* 🛒 Cart Icon - Always Visible */}
             <NavLink
               to="/cart"
@@ -206,7 +204,6 @@ function Navbar() {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 py-4">
             <div className="flex flex-col space-y-3">
-              
               {/* Mobile Navigation Links */}
               <NavLink
                 to="/"
@@ -221,7 +218,7 @@ function Navbar() {
               >
                 Home
               </NavLink>
-              
+
               <NavLink
                 to="/Product"
                 onClick={closeMobileMenu}
