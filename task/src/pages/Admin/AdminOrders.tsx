@@ -33,7 +33,7 @@ function AdminOrders() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      let url = "http://localhost:5000/api/orders/admin/all";
+      let url = "https://task-type-script-xi.vercel.app/api/admin/all";
       if (filter !== "all") {
         url += `?orderStatus=${filter}`;
       }

@@ -37,7 +37,7 @@ function ProductAdmin() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/product");
+      const response = await fetch("https://task-type-script-xi.vercel.app/api/product");
       if (!response.ok) throw new Error("Failed to fetch products");
       const data = await response.json();
       setAllProducts(data.products);
