@@ -36,7 +36,7 @@ function OrderHistory() {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/orders/my-orders", {
+      const response = await fetch("https://task-typescript.onrender.com/api/orders/my-orders", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

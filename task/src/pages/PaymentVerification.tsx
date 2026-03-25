@@ -1,22 +1,28 @@
 // src/pages/PaymentVerification.tsx
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 function PaymentVerification() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
   const [status, setStatus] = useState<"verifying" | "success" | "failed">("verifying");
   const [orderId, setOrderId] = useState<string | null>(null);
 
-  // ✅ FIX 1: Use useCallback so the function is stable and can be safely
-  // listed as a useEffect dependency without causing infinite re-renders.
+  // جلوگیری از اجرای دوباره (React Strict Mode fix)
+  const hasVerified = useRef(false);
+
   const verifyPayment = useCallback(
     async (reference: string) => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/orders/verify-payment/${reference}`
+          `https://task-typescript.onrender.com/api/orders/verify-payment/${reference}`
         );
+
+        if (!response.ok) {
+          throw new Error("Server error");
+        }
 
         const data = await response.json();
 
@@ -25,16 +31,18 @@ function PaymentVerification() {
           setOrderId(data.order.orderId);
           toast.success("Payment verified successfully!");
 
-          // Redirect to order tracking after 3 seconds
-          setTimeout(() => {
+          const timer = setTimeout(() => {
             navigate(`/track-order/${data.order.orderId}`);
           }, 3000);
+
+          return () => clearTimeout(timer);
         } else {
           setStatus("failed");
           toast.error("Payment verification failed");
         }
       } catch (error: unknown) {
         setStatus("failed");
+
         if (error instanceof Error) {
           toast.error(`Error verifying payment: ${error.message}`);
         } else {
@@ -42,13 +50,13 @@ function PaymentVerification() {
         }
       }
     },
-    // ✅ navigate is stable from React Router v6 — safe to include
     [navigate]
   );
 
-  // ✅ FIX 2: verifyPayment is now defined before this useEffect runs
-  // and is a stable reference thanks to useCallback.
   useEffect(() => {
+    if (hasVerified.current) return; // ✅ prevents double call
+    hasVerified.current = true;
+
     const reference = searchParams.get("reference");
 
     if (!reference) {
@@ -68,8 +76,12 @@ function PaymentVerification() {
         {status === "verifying" && (
           <div className="bg-white rounded-lg shadow-lg p-8 text-center">
             <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Verifying Payment</h2>
-            <p className="text-gray-600">Please wait while we confirm your payment...</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Verifying Payment
+            </h2>
+            <p className="text-gray-600">
+              Please wait while we confirm your payment...
+            </p>
           </div>
         )}
 
@@ -81,15 +93,25 @@ function PaymentVerification() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h2>
-            <p className="text-gray-600 mb-6">Your order has been confirmed and payment received.</p>
+
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Payment Successful!
+            </h2>
+
+            <p className="text-gray-600 mb-6">
+              Your order has been confirmed and payment received.
+            </p>
+
             {orderId && (
               <div className="bg-gray-50 rounded-lg p-4 mb-6">
                 <p className="text-sm text-gray-600 mb-1">Order ID</p>
                 <p className="text-lg font-bold text-gray-900">{orderId}</p>
               </div>
             )}
-            <p className="text-sm text-gray-500">Redirecting to order tracking in 3 seconds...</p>
+
+            <p className="text-sm text-gray-500">
+              Redirecting to order tracking in 3 seconds...
+            </p>
           </div>
         )}
 
@@ -101,8 +123,15 @@ function PaymentVerification() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Failed</h2>
-            <p className="text-gray-600 mb-6">We couldn't verify your payment. Please try again.</p>
+
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Payment Failed
+            </h2>
+
+            <p className="text-gray-600 mb-6">
+              We couldn't verify your payment. Please try again.
+            </p>
+
             <div className="flex gap-3">
               <button
                 onClick={() => navigate("/")}
@@ -110,6 +139,7 @@ function PaymentVerification() {
               >
                 Go Home
               </button>
+
               <button
                 onClick={() => navigate("/cart")}
                 className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"

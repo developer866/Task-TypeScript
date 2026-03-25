@@ -35,7 +35,7 @@ function MyOrders() {
     const fetchOrders = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/orders/my-orders",
+          "https://task-typescript.onrender.com/api/orders/my-orders",
           {
             headers: {
               Authorization: `Bearer ${token}`,

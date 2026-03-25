@@ -47,7 +47,7 @@ function TrackOrder() {
   const fetchOrder = async (id: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/orders/track/${id}`);
+      const response = await fetch(`https://task-typescript.onrender.com/api/orders/track/${id}`);
       const data = await response.json();
 
       if (!response.ok) {
